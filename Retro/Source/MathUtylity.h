@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint> 
 
 namespace mu 
 {
@@ -7,10 +8,27 @@ namespace mu
 		float x, y;
 	};
 
+	struct vec3
+	{
+		float x, y, z;
+	};
+
+	struct  vec4
+	{
+		float x, y, z, w;
+	};
+
+
 	inline vec2 operator+ (vec2 a, vec2 b) 
 	{
 		return vec2{ a.x + b.x, a.y + b.y };
 	}
+
+	inline vec2 operator- (vec2 a, vec2 b)
+	{
+		return vec2{ a.x - b.x, a.y - b.y };
+	}
+
 
 	inline vec2 operator* (vec2 a, float b)
 	{
@@ -21,4 +39,16 @@ namespace mu
 	{
 		return vec2{ a.x * b, a.y * b };
 	}
+
+
+	inline vec3 operator* (vec3 a, float b)
+	{
+		return vec3{ a.x * b, a.y * b, a.z * b};
+	}
+
+	struct vec2Int
+	{
+		int32_t x;
+		int32_t y;
+	};
 }

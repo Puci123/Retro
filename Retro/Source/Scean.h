@@ -19,6 +19,8 @@ class Scean
 
 		inline const Camera& GetCamera() const { return m_CameraMain; }
 
+		inline void SetCam(const Camera& cam) { m_CameraMain = cam; }
+
 
 	private:
 		uint32_t m_MapWidth;

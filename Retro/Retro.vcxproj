@@ -140,10 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\App.cpp" />
+    <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\MathUtylity.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Scean.cpp" />
+    <ClCompile Include="Source\Texture2D.cpp" />
+    <ClCompile Include="Source\Timer.cpp" />
     <ClCompile Include="Vendor\ImGUI\imgui.cpp" />
     <ClCompile Include="Vendor\ImGUI\imgui_demo.cpp" />
     <ClCompile Include="Vendor\ImGUI\imgui_draw.cpp" />
@@ -159,6 +162,8 @@
     <ClInclude Include="Source\MathUtylity.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Scean.h" />
+    <ClInclude Include="Source\Texture2D.h" />
+    <ClInclude Include="Source\Timer.h" />
     <ClInclude Include="Vendor\ImGUI\imconfig.h" />
     <ClInclude Include="Vendor\ImGUI\imgui.h" />
     <ClInclude Include="Vendor\ImGUI\imgui_impl_glfw.h" />

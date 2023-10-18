@@ -10,6 +10,7 @@
 #include "ImGUI/imgui_internal.h"
 
 #include "Scean.h"
+#include "Camera.h"
 
 class App
 {
@@ -30,4 +31,5 @@ class App
 		ImGuiIO* m_ImGuiIO;
 
 		Scean m_Scean;
+		Camera m_TempCam;
 };

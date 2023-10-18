@@ -8,7 +8,7 @@ Scean::Scean()
 {
 	m_MapLayout =
 	{
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	  1,1,1,1,1,1,1,1,1,1,1,3,3,1,1,1,1,1,1,1,1,1,1,1,
 	  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 	  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
 	  1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -34,13 +34,7 @@ Scean::Scean()
 	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	};
 
-	m_CameraMain = 
-	{
-		mu::vec2{22.0f, 12.f},
-		mu::vec2{-1.0f, 0.f},
-		mu::vec2{0.f, 0.66f}
-	};
-
+	m_CameraMain = Camera(mu::vec2{22.0f, 12.f},mu::vec2{-1.0f, 0.f},mu::vec2{0.f, 0.66f}, nullptr);
 	LOG("Created map with size: " << m_MapWidth << "x" << m_MapHeight);
 
 }
@@ -49,13 +43,7 @@ Scean::Scean(uint32_t width, uint32_t height)
 	: m_MapWidth(width), m_MapHeight(height)
 {
 	m_MapLayout.resize(width * height,0);
-
-	m_CameraMain =
-	{
-		mu::vec2{22.0f, 12.f},
-		mu::vec2{-1.0f, 0.f},
-		mu::vec2{0.f, 0.66f}
-	};
+	m_CameraMain = Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, nullptr);
 }
 
 Scean::Scean(uint32_t width, uint32_t height, const std::vector<uint8_t>& layout)
@@ -68,13 +56,8 @@ Scean::Scean(uint32_t width, uint32_t height, const std::vector<uint8_t>& layout
 		m_MapLayout[i] = layout[i];
 	}
 
-	m_CameraMain =
-	{
-		mu::vec2{22.0f, 12.f},
-		mu::vec2{-1.0f, 0.f},
-		mu::vec2{0.f, 0.66f}
-	};
 
+	m_CameraMain = Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, nullptr);
 }
 
 Scean::~Scean()

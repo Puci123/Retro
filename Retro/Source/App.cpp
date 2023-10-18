@@ -1,5 +1,6 @@
-#include "App.h"
 #include <iostream>
+#include "App.h"
+#include "Renderer.h"
 
 App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 	:m_WindwoWidth(windowWidth), m_WindowHeight(windowhHeight)
@@ -51,6 +52,11 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 	ImGui_ImplOpenGL3_Init("#version 130");
 
 
+	//Addition setup
+	m_Scean.SetCam(Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, new Texture2D(m_WindwoWidth, m_WindowHeight)));
+	Render(m_Scean);
+	m_Scean.GetCamera().GetTarget()->Update();
+
 }
 
 App::~App()
@@ -77,7 +83,12 @@ void App::Loop()
 	//Vwie port Panel 
 	ImGui::Begin("Vwie port");
 	{
-	
+		//TO DO: Scaling window
+		Texture2D* targetTexture = m_Scean.GetCamera().GetTarget();
+		
+		targetTexture->Bind();
+		ImGui::Image((void*)(intptr_t)(targetTexture->GetID()), ImVec2(static_cast<float>(m_WindwoWidth), static_cast<float>(m_WindowHeight - 8.0)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
+		targetTexture->Unbind();
 	}
 	ImGui::End();
 
