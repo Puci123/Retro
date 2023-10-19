@@ -17,9 +17,9 @@ class App
 	public:
 		App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name);
 		~App();
-
+		
+		void Update();
 		void Loop();
-
 
 		inline bool IsRunning() const { return true; }
 

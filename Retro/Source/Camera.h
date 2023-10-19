@@ -22,7 +22,8 @@ class Camera
 		void BindTargetTexture()	const;
 		void UnbindTargetTexture()  const;
 
-		
+		void MoveCamera(mu::vec2 traslation);
+		void RotateCam(float rotation);
 
 	private:
 		mu::vec2 m_Pos;

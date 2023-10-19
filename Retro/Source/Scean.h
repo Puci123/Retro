@@ -17,10 +17,12 @@ class Scean
 		inline uint32_t GetWidth()  const { return m_MapWidth; }
 		inline uint32_t GetHeight() const { return m_MapHeight; }
 
-		inline const Camera& GetCamera() const { return m_CameraMain; }
+		inline const Camera& GetCamera()	const	{ return m_CameraMain; }
 
 		inline void SetCam(const Camera& cam) { m_CameraMain = cam; }
 
+		void MoveCam(mu::vec2 traslation);
+		void RoteateCamera(float r);
 
 	private:
 		uint32_t m_MapWidth;

@@ -70,6 +70,34 @@ void App::Loop()
 	/* Poll for and process events */
 	glfwPollEvents();
 
+	//Render scean
+	Render(m_Scean);
+
+	//================================== Input handle ================================== //
+	
+	//TO DO: MOVING CAMERA
+	mu::vec2 traslation = mu::vec2{ 0.f,0.f };
+	mu::vec2 camFwd = m_Scean.GetCamera().Dir();
+
+
+
+	if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))
+	{
+		traslation.x = camFwd.x * 0.2f;
+		traslation.y = camFwd.y * 0.2f;
+
+	}
+	else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))
+	{
+		traslation.x = -camFwd.x * 0.2f;
+		traslation.y = -camFwd.y * 0.2f;
+	}
+
+	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) m_Scean.RoteateCamera(0.1f);
+	if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) m_Scean.RoteateCamera(-0.1f);
+
+	m_Scean.MoveCam(traslation);
+
 	//================================== Render GUI ================================== //
 
 	//Start the Dear ImGui frame

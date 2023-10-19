@@ -60,9 +60,8 @@ Scean::Scean(uint32_t width, uint32_t height, const std::vector<uint8_t>& layout
 	m_CameraMain = Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, nullptr);
 }
 
-Scean::~Scean()
-{
-}
+Scean::~Scean(){}
+
 
 uint8_t Scean::GetCellValue(uint32_t x, uint32_t y) const
 {
@@ -70,5 +69,15 @@ uint8_t Scean::GetCellValue(uint32_t x, uint32_t y) const
 	ASSERT(y < m_MapHeight);		//Invalid map height
 
 	return m_MapLayout[y * m_MapWidth + x];
+}
+
+void Scean::MoveCam(mu::vec2 translation)
+{
+	m_CameraMain.MoveCamera(translation);
+}
+
+void Scean::RoteateCamera(float r)
+{
+	m_CameraMain.RotateCam(r);
 }
 	
