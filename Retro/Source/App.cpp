@@ -75,7 +75,9 @@ void App::Loop()
 
 	//================================== Input handle ================================== //
 	
-	//TO DO: MOVING CAMERA
+	//Camera movment 
+	//TO DO abstract to anthore class
+
 	mu::vec2 traslation = mu::vec2{ 0.f,0.f };
 	mu::vec2 camFwd = m_Scean.GetCamera().Dir();
 
@@ -93,8 +95,26 @@ void App::Loop()
 		traslation.y = -camFwd.y * 0.2f;
 	}
 
-	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) m_Scean.RoteateCamera(0.1f);
-	if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) m_Scean.RoteateCamera(-0.1f);
+	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow) && ImGui::IsKeyPressed(ImGuiKey_LeftShift))
+	{
+		m_Scean.RoteateCamera(0.1f);
+	}
+	else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow) && ImGui::IsKeyPressed(ImGuiKey_LeftShift))
+	{
+		m_Scean.RoteateCamera(-0.1f);
+	}
+	else if(ImGui::IsKeyPressed(ImGuiKey_RightArrow))
+	{
+		mu::vec2 temp = mu::vec2{ camFwd.y, -camFwd.x };
+		traslation.x = temp.x * 0.2f;
+		traslation.y = temp.y * 0.2f;
+	}
+	else if(ImGui::IsKeyPressed(ImGuiKey_LeftArrow))
+	{
+		mu::vec2 temp = mu::vec2{ -camFwd.y, camFwd.x };
+		traslation.x = temp.x * 0.2f;
+		traslation.y = temp.y * 0.2f;
+	}
 
 	m_Scean.MoveCam(traslation);
 

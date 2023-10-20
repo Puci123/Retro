@@ -4,8 +4,8 @@
 #include "Texture2D.h"
 #include "DebugUtility.h"
 
-Texture2D::Texture2D(uint32_t width, uint32_t height)
-	:m_RenderID(0), m_Width(width), m_Height(height)
+Texture2D::Texture2D(uint32_t width, uint32_t height, bool gpuBind)
+	:m_RenderID(0), m_Width(width), m_Height(height), m_GpuSide(gpuBind)
 {
 	m_TextureBuffer.resize(width * height);
 
@@ -14,27 +14,42 @@ Texture2D::Texture2D(uint32_t width, uint32_t height)
 		m_TextureBuffer[i] = mu::vec4{ 0.f, 0.f, 0.f, 1.f };
 	}
 
-	// Create Image on GPU side
-	glGenTextures(1, &m_RenderID);
-	Bind();
+	if (m_GpuSide)
+	{
+		// Create Image on GPU side
+		glGenTextures(1, &m_RenderID);
+		Bind();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, &m_TextureBuffer[0]);
-	Unbind();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, &m_TextureBuffer[0]);
+		Unbind();
 
-	std::cout << "Created texture with dim: " << m_Width << "x" << m_Height << " (ID " << m_RenderID << ")" << std::endl;
-
+		LOG("Created texture with dim: " << m_Width << "x" << m_Height << " (ID " << m_RenderID << ")");
+	}
+	else
+	{
+		LOG("Created texture with dim: " << m_Width << "x" << m_Height << " (CPU SIDE)");
+	}
 }
 
 Texture2D::~Texture2D()
 {
-	std::cout << "Texture destroyed with ID " << m_RenderID << std::endl;
 	m_TextureBuffer = std::vector<mu::vec4>();
-	glDeleteTextures(1, &m_RenderID);
+	
+	if (m_GpuSide) 
+	{
+
+		LOG("Texture destroyed with ID " << m_RenderID);	
+		glDeleteTextures(1, &m_RenderID);
+	}
+	else
+	{
+		LOG("Texture destroyed CPU SIDE");
+	}
 
 }
 

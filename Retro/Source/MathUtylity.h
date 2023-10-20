@@ -46,6 +46,11 @@ namespace mu
 		return vec3{ a.x * b, a.y * b, a.z * b};
 	}
 
+	inline vec3 operator/ (vec3 a, float b) 
+	{
+		return a * (1 / b);
+	}
+
 	struct vec2Int
 	{
 		int32_t x;

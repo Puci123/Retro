@@ -37,6 +37,21 @@ Scean::Scean()
 	m_CameraMain = Camera(mu::vec2{22.0f, 12.f},mu::vec2{-1.0f, 0.f},mu::vec2{0.f, 0.66f}, nullptr);
 	LOG("Created map with size: " << m_MapWidth << "x" << m_MapHeight);
 
+	//=================================	INIT TEXTURE (TEST ONLY) =================================//
+
+	m_SceanTextures.resize(8, Texture2D(64, 64, false));
+	for (size_t y = 0; y < 64; y++)
+	{
+		for (int x = 0; x < 64; x++)
+		{
+			m_SceanTextures[1].SetPixel(x, y, mu::vec3{ 1,0,0 } * static_cast<float>(x != y && x != m_SceanTextures[0].GetHeight() - y));
+			m_SceanTextures[0].SetPixel(x, y, mu::vec3{ 1,1,1 } * static_cast<float>(y) / m_SceanTextures[1].GetHeight());
+			m_SceanTextures[2].SetPixel(x, y, mu::vec3{ 1,1,0 } * static_cast<float>(y) / m_SceanTextures[2].GetHeight());
+			m_SceanTextures[3].SetPixel(x, y, mu::vec3{ 0,1,0 } * static_cast<float>(x) / m_SceanTextures[3].GetHeight());
+			m_SceanTextures[4].SetPixel(x, y, mu::vec3{ 0,0,1 } * static_cast<float>(x) / m_SceanTextures[4].GetHeight());
+		}
+	}
+
 }
 
 Scean::Scean(uint32_t width, uint32_t height)
@@ -69,6 +84,13 @@ uint8_t Scean::GetCellValue(uint32_t x, uint32_t y) const
 	ASSERT(y < m_MapHeight);		//Invalid map height
 
 	return m_MapLayout[y * m_MapWidth + x];
+}
+
+const Texture2D& Scean::GetTexture(uint32_t texID) const
+{
+	ASSERT(--texID < m_SceanTextures.size()); //Invalid texture id
+	return m_SceanTextures[texID];
+
 }
 
 void Scean::MoveCam(mu::vec2 translation)
