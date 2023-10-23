@@ -39,18 +39,13 @@ Scean::Scean()
 
 	//=================================	INIT TEXTURE (TEST ONLY) =================================//
 
-	m_SceanTextures.resize(8, Texture2D(64, 64, false));
-	for (size_t y = 0; y < 64; y++)
-	{
-		for (int x = 0; x < 64; x++)
-		{
-			m_SceanTextures[1].SetPixel(x, y, mu::vec3{ 1,0,0 } * static_cast<float>(x != y && x != m_SceanTextures[0].GetHeight() - y));
-			m_SceanTextures[0].SetPixel(x, y, mu::vec3{ 1,1,1 } * static_cast<float>(y) / m_SceanTextures[1].GetHeight());
-			m_SceanTextures[2].SetPixel(x, y, mu::vec3{ 1,1,0 } * static_cast<float>(y) / m_SceanTextures[2].GetHeight());
-			m_SceanTextures[3].SetPixel(x, y, mu::vec3{ 0,1,0 } * static_cast<float>(x) / m_SceanTextures[3].GetHeight());
-			m_SceanTextures[4].SetPixel(x, y, mu::vec3{ 0,0,1 } * static_cast<float>(x) / m_SceanTextures[4].GetHeight());
-		}
-	}
+
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\bluestone.png",false));
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\redbrick.png", false));
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\greystone.png", false));
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\mossy.png", false));
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\eagle.png", false));
+
 
 }
 

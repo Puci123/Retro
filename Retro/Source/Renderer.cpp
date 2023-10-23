@@ -135,7 +135,7 @@ void Render(const Scean& scean)
 	target->Update();
 
 	renderTime.Stop();
-	LOG("frame rendered in time: " << renderTime);
+	//LOG("frame rendered in time: " << renderTime);
 }
 
 void Clear(Texture2D* targt)

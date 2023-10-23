@@ -60,6 +60,9 @@
     <ClCompile Include="Source\Timer.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Vendor\stbi\stbi_image.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\ImGUI\imconfig.h">
@@ -113,5 +116,43 @@
     <ClInclude Include="Source\Timer.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Vendor\stbi\stbi_image.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Textures\barrel.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\bluestone.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\colorstone.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\eagle.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\greenlight.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\greystone.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\mossy.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\pillar.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\purplestone.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\redbrick.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resources\Textures\wood.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
   </ItemGroup>
 </Project>

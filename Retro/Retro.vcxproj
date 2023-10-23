@@ -154,6 +154,7 @@
     <ClCompile Include="Vendor\ImGUI\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Vendor\ImGUI\imgui_tables.cpp" />
     <ClCompile Include="Vendor\ImGUI\imgui_widgets.cpp" />
+    <ClCompile Include="Vendor\stbi\stbi_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -173,6 +174,20 @@
     <ClInclude Include="Vendor\ImGUI\imstb_rectpack.h" />
     <ClInclude Include="Vendor\ImGUI\imstb_textedit.h" />
     <ClInclude Include="Vendor\ImGUI\imstb_truetype.h" />
+    <ClInclude Include="Vendor\stbi\stbi_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Textures\barrel.png" />
+    <Image Include="Resources\Textures\bluestone.png" />
+    <Image Include="Resources\Textures\colorstone.png" />
+    <Image Include="Resources\Textures\eagle.png" />
+    <Image Include="Resources\Textures\greenlight.png" />
+    <Image Include="Resources\Textures\greystone.png" />
+    <Image Include="Resources\Textures\mossy.png" />
+    <Image Include="Resources\Textures\pillar.png" />
+    <Image Include="Resources\Textures\purplestone.png" />
+    <Image Include="Resources\Textures\redbrick.png" />
+    <Image Include="Resources\Textures\wood.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

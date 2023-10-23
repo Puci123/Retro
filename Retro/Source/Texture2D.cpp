@@ -4,15 +4,58 @@
 #include "Texture2D.h"
 #include "DebugUtility.h"
 
-Texture2D::Texture2D(uint32_t width, uint32_t height, bool gpuBind)
+Texture2D::Texture2D(int32_t width, int32_t height, bool gpuBind)
 	:m_RenderID(0), m_Width(width), m_Height(height), m_GpuSide(gpuBind)
 {
 	m_TextureBuffer.resize(width * height);
 
-	for (uint32_t i = 0; i < width * height; i++)
+	for (int32_t i = 0; i < width * height; i++)
 	{
 		m_TextureBuffer[i] = mu::vec4{ 0.f, 0.f, 0.f, 1.f };
 	}
+
+	if (m_GpuSide)
+	{
+		// Create Image on GPU side
+		glGenTextures(1, &m_RenderID);
+		Bind();
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, &m_TextureBuffer[0]);
+		Unbind();
+
+		LOG("Created texture with dim: " << m_Width << "x" << m_Height << " (ID " << m_RenderID << ")");
+	}
+	else
+	{
+		LOG("Created texture with dim: " << m_Width << "x" << m_Height << " (CPU SIDE)");
+	}
+}
+
+Texture2D::Texture2D(const std::string& path, bool gpuBind)
+	:m_GpuSide(gpuBind), m_RenderID(0)
+{
+	stbi_set_flip_vertically_on_load(1);
+
+	int32_t  numberOfParameters;
+	uint8_t* tempBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &numberOfParameters, 4);
+	LOG("Texture loaded from " << path << " OK!");
+
+	m_TextureBuffer.resize(m_Width * m_Height);
+	int32_t curentPixel = 0;
+
+	while (curentPixel < m_Width * m_Height)
+	{
+		mu::vec4 pixelColor{ tempBuffer[4 * curentPixel] / 255.f, tempBuffer[4 * curentPixel + 1] / 255.f, tempBuffer[4 * curentPixel + 2] / 255.f, tempBuffer[4 * curentPixel + 3] / 255.f };
+		m_TextureBuffer[curentPixel++] = pixelColor;
+	}
+
+	delete[] tempBuffer;
+
 
 	if (m_GpuSide)
 	{

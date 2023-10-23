@@ -3,13 +3,18 @@
 #pragma once
 #include <GL/glew.h>
 #include<vector>
+#include<stbi/stbi_image.h>
+#include <string>
 
 #include "MathUtylity.h"
+
 
 class Texture2D
 {
 public:
-	Texture2D(uint32_t width, uint32_t height, bool gpuBind = true);
+	Texture2D(int32_t width, int32_t height, bool gpuBind = true);
+	Texture2D(const std::string& path, bool gpuBind = true);
+
 	~Texture2D();
 
 
@@ -32,8 +37,8 @@ public:
 
 private:
 	uint32_t m_RenderID;
-	uint32_t m_Width;
-	uint32_t m_Height;
+	int32_t m_Width;
+	int32_t m_Height;
 	bool m_GpuSide;
 
 	std::vector<mu::vec4> m_TextureBuffer;
