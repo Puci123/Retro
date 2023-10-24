@@ -95,11 +95,11 @@ void App::Loop()
 		traslation.y = -camFwd.y * 0.2f;
 	}
 
-	if (ImGui::IsKeyPressed(ImGuiKey_RightArrow) && ImGui::IsKeyPressed(ImGuiKey_LeftShift))
+	if (ImGui::IsKeyPressed(ImGuiKey_D))
 	{
 		m_Scean.RoteateCamera(0.1f);
 	}
-	else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow) && ImGui::IsKeyPressed(ImGuiKey_LeftShift))
+	else if (ImGui::IsKeyPressed(ImGuiKey_A))
 	{
 		m_Scean.RoteateCamera(-0.1f);
 	}

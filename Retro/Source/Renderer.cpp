@@ -16,10 +16,59 @@ void Render(const Scean& scean)
 
 	Clear(target);
 
+	const Texture2D& floorTextrue = scean.GetTexture(3);
+	const Texture2D& ceelingTextrue = scean.GetTexture(4);
+
+
+	float floorScale	= 0.5f;
+	float cealingScale  = 0.5f;
+
+	//================================== DRAW FLOORS  ==================================//
+
+	for (size_t y = 0; y < target->GetHeight(); y++)
+	{
+		mu::vec2 rayDri0 = mu::vec2{ cam.Dir() - cam.ClipPlane() };
+		mu::vec2 rayDir1 = mu::vec2{ cam.Dir() + cam.ClipPlane() };
+
+		int32_t yCenter = y - target->GetHeight() / 2;
+		float zPos = target->GetHeight() / 2.f;
+
+		//Distance form camera to curent floor row (0 -> floor; 0.5-> midle; 1 -> cealing)
+		float rowDist = zPos / yCenter;
+
+		mu::vec2 step = rowDist * (rayDir1 - rayDri0) / static_cast<float>(target->GetWidth());
+
+		//World cords of most left column
+		mu::vec2 floorStart = mu::vec2{ cam.Pos() + rayDri0 * rowDist};
+
+
+		for (size_t x = 0; x < target->GetWidth(); x++)
+		{
+			mu::vec2Int cell	= mu::vec2Int{static_cast<int32_t>(floorStart.x), static_cast<int32_t>(floorStart.y) };
+			mu::vec2Int uvCords = mu::vec2Int{
+				
+				static_cast<int32_t>(floorTextrue.GetWidth()  * (floorStart.x - cell.x)) & (static_cast<int32_t>(floorTextrue.GetWidth()) -  1),
+				static_cast<int32_t>(floorTextrue.GetHeight() * (floorStart.y - cell.y)) & (static_cast<int32_t>(floorTextrue.GetHeight()) - 1)
+			};
+
+			floorStart = floorStart + step;
+
+
+			//Draw floor to screan
+			mu::vec3 color = floorTextrue.SampleTexture(static_cast<int32_t>(uvCords.x * floorScale) % floorTextrue.GetWidth(), static_cast<int32_t>(uvCords.y * floorScale) % floorTextrue.GetHeight());
+			target->SetPixel(x, target->GetHeight() -  y - 1, color);
+
+			//Draw cealing to screan [WARING: HAVE TO BE SAME SIZE AS FLOOR (texture)]
+			color = ceelingTextrue.SampleTexture(static_cast<int32_t>(uvCords.x * cealingScale) % ceelingTextrue.GetWidth(), static_cast<int32_t>(uvCords.y * cealingScale) % ceelingTextrue.GetHeight());
+			target->SetPixel(x, y, color);
+		}
+	}
+
+
+
+	//================================== DRAW WALLS ==================================//
 	for (size_t x = 0; x < target->GetWidth(); x++)
 	{
-
-		//================================== INITIAL VALUES ==================================//
 
 		float cameraX = (2 * x / static_cast<float>(target->GetWidth())) - 1;
 		
@@ -59,6 +108,8 @@ void Render(const Scean& scean)
 			step.y = 1;
 			sideDist.y = (map.y + 1.0f - cam.Pos().y) * deltaDist.y;
 		}
+
+
 
 		//================================== DDA ==================================//
 

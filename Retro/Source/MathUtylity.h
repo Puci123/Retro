@@ -40,6 +40,11 @@ namespace mu
 		return vec2{ a.x * b, a.y * b };
 	}
 
+	inline vec2 operator/ (vec2 a, float b)
+	{
+		return a * (1 / b);
+	}
+
 
 	inline vec3 operator* (vec3 a, float b)
 	{
