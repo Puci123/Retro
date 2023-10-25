@@ -1,10 +1,12 @@
 #include <cstdint> 
+#include <vector>
+#include <algorithm>
 
 #include "DebugUtility.h"
+
 #include "Renderer.h"
 #include "Camera.h"
 #include "Timer.h"
-
 
 void Render(const Scean& scean)
 {
@@ -19,6 +21,9 @@ void Render(const Scean& scean)
 	const Texture2D& floorTextrue = scean.GetTexture(3);
 	const Texture2D& ceelingTextrue = scean.GetTexture(4);
 
+	std::vector<float> zBuffer = std::vector<float>(target->GetWidth(),0.f);
+	std::vector<float> distToSprite = std::vector<float>(scean.SpriteCount(), 0.f);
+	std::vector<int32_t> spriteOrder = std::vector<int32_t>(scean.SpriteCount(), -1);
 
 	float floorScale	= 0.5f;
 	float cealingScale  = 0.5f;
@@ -179,7 +184,77 @@ void Render(const Scean& scean)
 
 			texCord.y += verticalStep;
 		}
+		zBuffer[x] = prepWallDist;
 
+	}
+
+
+	//================================== Draw Sprites ==================================//
+
+	for (size_t i = 0; i < scean.SpriteCount(); i++)
+	{
+		mu::vec2 spritePos = scean.GetSprite(i).GetPos();
+
+		//TODO: CREATE HEAP TO ACCELETARE
+		spriteOrder[i] = i;
+		distToSprite[i] = (cam.Pos().x - spritePos.x) * (cam.Pos().x - spritePos.x) + (cam.Pos().y - spritePos.y) * (cam.Pos().y - spritePos.y);
+	}
+
+	SortSprites(spriteOrder, distToSprite, scean.SpriteCount());
+
+	//Project sprites to camera plane
+	for (int i = 0; i < scean.SpriteCount(); i++)
+	{
+		const Sprite& curentSprite = scean.GetSprite(spriteOrder[i]);
+		mu::vec2 spritePos = curentSprite.GetPos() - cam.Pos();
+
+		//transform sprite with the inverse camera matrix
+		// [ planeX   dirX ] -1                                       [ dirY      -dirX ]
+		// [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
+		// [ planeY   dirY ]                                          [ -planeY  planeX ]
+
+		float invertCamDet = 1.0f / (cam.ClipPlane().x * cam.Dir().y - cam.ClipPlane().y * cam.Dir().x);
+		mu::vec2 trnasform = invertCamDet * mu::vec2{ cam.Dir().y * curentSprite.GetPos().x - cam.Dir().x * curentSprite.GetPos().y,					//x
+													-cam.ClipPlane().y * curentSprite.GetPos().x + cam.ClipPlane().y * curentSprite.GetPos().x };		//y (depth not height)
+
+		int32_t screanSpaceX = static_cast<int32_t>((target->GetWidth() / 2) * (1 + trnasform.x / trnasform.y));
+
+		//height of the sprite 
+		int32_t spriteHeight = static_cast<int32_t>(abs(target->GetHeight() / trnasform.y));
+
+		mu::vec2Int spriteDrawStart{ 0,0 };
+		mu::vec2Int spriteDrawStop{ 0, 0 };
+
+		spriteDrawStart.y = target->GetHeight() / 2 - scean.GetTexture(curentSprite.GetTextureID()).GetHeight() / 2;
+		if (spriteDrawStart.y < 0) spriteDrawStart.y = 0;
+
+		spriteDrawStop.y = target->GetHeight() / 2 + scean.GetTexture(curentSprite.GetTextureID()).GetHeight() / 2;
+		if (spriteDrawStop.y >= target->GetHeight()) spriteDrawStop.y = target->GetHeight() - 1;
+
+		//width of sprite
+		int32_t spriteWidth = spriteHeight; //???
+
+		spriteDrawStart.x = screanSpaceX - spriteWidth / 2;
+		if (spriteDrawStart.x < 0) spriteDrawStart.x = 0;
+
+		spriteDrawStop.x = screanSpaceX + spriteWidth / 2;
+		if (spriteDrawStop.x >= target->GetWidth()) spriteDrawStop.x = target->GetWidth() - 1;
+
+
+		for (size_t x = spriteDrawStart.x; x < spriteDrawStop.x; x++)
+		{
+			if (trnasform.y > 0 && x > 0 && x < target->GetWidth() && trnasform.y < zBuffer[x])
+			{
+				//TODO: write sprite to screan
+
+				for (size_t y = spriteDrawStart.y; y < spriteDrawStop.y; y++)
+				{
+
+				}
+			}
+		}
+
+		
 	}
 
 	//Update texture
@@ -197,6 +272,27 @@ void Clear(Texture2D* targt)
 		{
 			targt->SetPixel(x, y, mu::vec3{ 0,0,0 });
 		}
+	}
+
+}
+
+void SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, int32_t n)
+{
+	std::vector<std::pair<float, int32_t>> spritesPair(n);
+
+	for (int32_t i = 0; i < n; i++)
+	{
+		spritesPair[i].first  = dist2sprite[i];
+		spritesPair[i].second = order[i];
+
+	}
+
+	std::sort(spritesPair.begin(), spritesPair.end());
+
+	for (int32_t i = 0; i < n; i++)
+	{
+		dist2sprite[i] = spritesPair[n - i - 1].first;
+		order[i] = spritesPair[n - i - 1].second;
 	}
 
 }

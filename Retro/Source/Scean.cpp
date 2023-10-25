@@ -40,11 +40,19 @@ Scean::Scean()
 	//=================================	INIT TEXTURE (TEST ONLY) =================================//
 
 
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\bluestone.png",false));
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\redbrick.png", false));
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\greystone.png", false));
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\mossy.png", false));
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\eagle.png", false));
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\bluestone.png",false));	//1
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\redbrick.png", false));	//2
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\greystone.png", false));	//3
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\mossy.png", false));		//4
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\eagle.png", false));		//5
+	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\barrel.png", false));		//6
+
+
+	///================================= INIT SPRITES =================================//
+
+	m_SceanSprites.push_back(Sprite(20.5f, 11.5f, 6));
+	m_SceanSprites.push_back(Sprite(10.0f, 4.5f, 6));
+	m_SceanSprites.push_back(Sprite(10.0f, 12.5f, 6));
 
 
 }
