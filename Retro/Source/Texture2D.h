@@ -6,6 +6,7 @@
 #include<stbi/stbi_image.h>
 #include <string>
 
+#include "DebugUtility.h"
 #include "MathUtylity.h"
 
 
@@ -21,15 +22,18 @@ public:
 	void Bind();
 	void Unbind();
 
-	void SetPixel(uint32_t x, uint32_t y, mu::vec3 color);
+	void SetPixel(int32_t x, int32_t y, mu::vec3 color);
 	void Update();
 
-	inline uint32_t GetWidth()	const { return m_Width; }
-	inline uint32_t GetHeight() const { return m_Height; }
+	inline int32_t GetWidth()	const { return m_Width; }
+	inline int32_t GetHeight() const { return m_Height; }
 	inline uint32_t GetID()     const { return m_RenderID; }
 
-	inline mu::vec3 SampleTexture(uint32_t x, uint32_t y) const
+	inline mu::vec3 SampleTexture(int32_t x, int32_t y) const
 	{
+		//ASSERT(x < m_Width); //Inavlid witdth;
+		ASSERT(y < m_Height); //Inavlid witdth;
+
 		mu::vec4 temp = m_TextureBuffer[y * m_Width + x];
 		return mu::vec3{ temp.x, temp.y, temp.z };
 	}

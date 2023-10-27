@@ -51,9 +51,7 @@ Scean::Scean()
 	///================================= INIT SPRITES =================================//
 
 	m_SceanSprites.push_back(Sprite(20.5f, 11.5f, 6));
-	m_SceanSprites.push_back(Sprite(10.0f, 4.5f, 6));
 	m_SceanSprites.push_back(Sprite(10.0f, 12.5f, 6));
-
 
 }
 

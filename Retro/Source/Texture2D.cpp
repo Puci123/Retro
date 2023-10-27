@@ -109,7 +109,7 @@ void Texture2D::Unbind()
 }
 
 
-void Texture2D::SetPixel(uint32_t x, uint32_t y, mu::vec3 color)
+void Texture2D::SetPixel(int32_t x, int32_t y, mu::vec3 color)
 {
 	
 

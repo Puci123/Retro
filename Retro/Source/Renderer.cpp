@@ -22,15 +22,13 @@ void Render(const Scean& scean)
 	const Texture2D& ceelingTextrue = scean.GetTexture(4);
 
 	std::vector<float> zBuffer = std::vector<float>(target->GetWidth(),0.f);
-	std::vector<float> distToSprite = std::vector<float>(scean.SpriteCount(), 0.f);
-	std::vector<int32_t> spriteOrder = std::vector<int32_t>(scean.SpriteCount(), -1);
 
 	float floorScale	= 0.5f;
 	float cealingScale  = 0.5f;
 
 	//================================== DRAW FLOORS  ==================================//
 
-	for (size_t y = 0; y < target->GetHeight(); y++)
+	for (int32_t y = 0; y < target->GetHeight(); y++)
 	{
 		mu::vec2 rayDri0 = mu::vec2{ cam.Dir() - cam.ClipPlane() };
 		mu::vec2 rayDir1 = mu::vec2{ cam.Dir() + cam.ClipPlane() };
@@ -47,7 +45,7 @@ void Render(const Scean& scean)
 		mu::vec2 floorStart = mu::vec2{ cam.Pos() + rayDri0 * rowDist};
 
 
-		for (size_t x = 0; x < target->GetWidth(); x++)
+		for (int32_t x = 0; x < target->GetWidth(); x++)
 		{
 			mu::vec2Int cell	= mu::vec2Int{static_cast<int32_t>(floorStart.x), static_cast<int32_t>(floorStart.y) };
 			mu::vec2Int uvCords = mu::vec2Int{
@@ -72,7 +70,7 @@ void Render(const Scean& scean)
 
 
 	//================================== DRAW WALLS ==================================//
-	for (size_t x = 0; x < target->GetWidth(); x++)
+	for (int32_t x = 0; x < target->GetWidth(); x++)
 	{
 
 		float cameraX = (2 * x / static_cast<float>(target->GetWidth())) - 1;
@@ -149,7 +147,7 @@ void Render(const Scean& scean)
 		
 		int32_t lineLenght = static_cast<int32_t>(target->GetHeight() / prepWallDist);
 		int32_t drawStart = -lineLenght / 2 + target->GetHeight() / 2;
-		uint32_t drawEnd = lineLenght / 2 + target->GetHeight() / 2;
+		int32_t drawEnd = lineLenght / 2 + target->GetHeight() / 2;
 
 		if (drawStart < 0) drawStart = 0;
 		if (drawEnd >= target->GetHeight()) drawEnd = target->GetHeight() - 1;
@@ -176,7 +174,7 @@ void Render(const Scean& scean)
 
 
 		// Draw to screan
-		for (size_t y = drawStart; y < drawEnd; y++)
+		for (int32_t y = drawStart; y < drawEnd; y++)
 		{
 
 			mu::vec3 color = objectTexture.SampleTexture(static_cast<uint32_t>(texCord.x), static_cast<uint32_t>(texCord.y));
@@ -191,71 +189,90 @@ void Render(const Scean& scean)
 
 	//================================== Draw Sprites ==================================//
 
+	//Calc distance from camera to srites in scean
+	std::vector<float> distances(scean.SpriteCount());
+	std::vector<int32_t> spriteOrder(scean.SpriteCount());
+
 	for (size_t i = 0; i < scean.SpriteCount(); i++)
 	{
-		mu::vec2 spritePos = scean.GetSprite(i).GetPos();
-
-		//TODO: CREATE HEAP TO ACCELETARE
 		spriteOrder[i] = i;
-		distToSprite[i] = (cam.Pos().x - spritePos.x) * (cam.Pos().x - spritePos.x) + (cam.Pos().y - spritePos.y) * (cam.Pos().y - spritePos.y);
+		distances[i] = (scean.GetSprite(i).GetPos().x - cam.Pos().x) * (scean.GetSprite(i).GetPos().x - cam.Pos().x) + (scean.GetSprite(i).GetPos().y - cam.Pos().y) * (scean.GetSprite(i).GetPos().y - cam.Pos().y);
 	}
+	
+	SortSprites(spriteOrder, distances, scean.SpriteCount());
+	
 
-	SortSprites(spriteOrder, distToSprite, scean.SpriteCount());
-
-	//Project sprites to camera plane
-	for (int i = 0; i < scean.SpriteCount(); i++)
+	for (size_t i = 0; i < scean.SpriteCount(); i++)
 	{
 		const Sprite& curentSprite = scean.GetSprite(spriteOrder[i]);
-		mu::vec2 spritePos = curentSprite.GetPos() - cam.Pos();
+		const Texture2D& spriteTex = scean.GetTexture(curentSprite.GetTextureID());
+
+		mu::vec2 csPos; //Sprite position related to camera
+
+		csPos.x = curentSprite.GetPos().x - cam.Pos().x;
+		csPos.y = curentSprite.GetPos().y - cam.Pos().y;
 
 		//transform sprite with the inverse camera matrix
 		// [ planeX   dirX ] -1                                       [ dirY      -dirX ]
 		// [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
 		// [ planeY   dirY ]                                          [ -planeY  planeX ]
 
-		float invertCamDet = 1.0f / (cam.ClipPlane().x * cam.Dir().y - cam.ClipPlane().y * cam.Dir().x);
-		mu::vec2 trnasform = invertCamDet * mu::vec2{ cam.Dir().y * curentSprite.GetPos().x - cam.Dir().x * curentSprite.GetPos().y,					//x
-													-cam.ClipPlane().y * curentSprite.GetPos().x + cam.ClipPlane().y * curentSprite.GetPos().x };		//y (depth not height)
+		float invDet = 1.0f / (cam.ClipPlane().x * cam.Dir().y - cam.Dir().x * cam.ClipPlane().y);
+		
+		float transformX = invDet * (cam.Dir().y * csPos.x - cam.Dir().x * csPos.y);
+		float transformY = invDet * (-cam.ClipPlane().y * csPos.x + cam.ClipPlane().x * csPos.y);
 
-		int32_t screanSpaceX = static_cast<int32_t>((target->GetWidth() / 2) * (1 + trnasform.x / trnasform.y));
+		int32_t screanX = static_cast<int32_t>((target->GetWidth() / 2) * (1 + transformX / transformY));
 
-		//height of the sprite 
-		int32_t spriteHeight = static_cast<int32_t>(abs(target->GetHeight() / trnasform.y));
+		//Calculet screan space height
+		int32_t spriteHeight = abs(static_cast<int32_t>(target->GetHeight() / transformY));
 
-		mu::vec2Int spriteDrawStart{ 0,0 };
-		mu::vec2Int spriteDrawStop{ 0, 0 };
+		int32_t drawStartY = -spriteHeight / 2 + target->GetHeight() / 2;
+		if (drawStartY < 0) drawStartY = 0;
 
-		spriteDrawStart.y = target->GetHeight() / 2 - scean.GetTexture(curentSprite.GetTextureID()).GetHeight() / 2;
-		if (spriteDrawStart.y < 0) spriteDrawStart.y = 0;
+		int32_t drawStopY = spriteHeight / 2 + target->GetHeight() / 2;
+		if (drawStopY >= target->GetHeight()) drawStopY = target->GetHeight() - 1;
 
-		spriteDrawStop.y = target->GetHeight() / 2 + scean.GetTexture(curentSprite.GetTextureID()).GetHeight() / 2;
-		if (spriteDrawStop.y >= target->GetHeight()) spriteDrawStop.y = target->GetHeight() - 1;
+		//Calculete screan spece width
+		int32_t spriteWidth = abs(static_cast<int32_t>(target-> GetHeight() / transformY));
 
-		//width of sprite
-		int32_t spriteWidth = spriteHeight; //???
+		int32_t drawStartX = -spriteWidth / 2 + screanX;
+		if (drawStartX < 0) drawStartX = 0;
 
-		spriteDrawStart.x = screanSpaceX - spriteWidth / 2;
-		if (spriteDrawStart.x < 0) spriteDrawStart.x = 0;
+		int32_t drawStopX = spriteWidth / 2 + screanX;
+		if (drawStopX >= target->GetWidth()) drawStopX = target->GetWidth() - 1;
 
-		spriteDrawStop.x = screanSpaceX + spriteWidth / 2;
-		if (spriteDrawStop.x >= target->GetWidth()) spriteDrawStop.x = target->GetWidth() - 1;
+		//lop vertacly throught screan
+		int spriteH = spriteTex.GetHeight();
+		int spriteW = spriteTex.GetWidth();
 
 
-		for (size_t x = spriteDrawStart.x; x < spriteDrawStop.x; x++)
+		for (int32_t x = drawStartX; x < drawStopX; x++)
 		{
-			if (trnasform.y > 0 && x > 0 && x < target->GetWidth() && trnasform.y < zBuffer[x])
+			if (transformY > 0 && x > 0 && x < target->GetWidth() && transformY < zBuffer[x])
 			{
-				//TODO: write sprite to screan
+				int texX = int(256 * (x - (-spriteWidth / 2 + screanX)) * spriteW / spriteWidth) / 256;
 
-				for (size_t y = spriteDrawStart.y; y < spriteDrawStop.y; y++)
+				for (int32_t y = drawStartY; y < drawStopY; y++)
 				{
+					int32_t d = y * 256 - target->GetHeight() * 128 + spriteHeight * 128;
+					int texY = ((d * spriteH) / spriteHeight) / 256;
+					
+					if (texX > spriteW) LOG_ERROR("Invalid uv x cord: " << texX);
+					if (texY > spriteH) LOG_ERROR("Invalid uv x cord: " << texX);
 
+					mu::vec3 color = spriteTex.SampleTexture(texX, texY);
+
+					//TODO implement alfa chanel and blending
+					//Temproaly treat black as fully transparent
+					if(!mu::Close2Zero(color)) target->SetPixel(x, y, color); 
 				}
 			}
-		}
+			
 
-		
+		}
 	}
+
 
 	//Update texture
 	target->Update();
@@ -266,9 +283,9 @@ void Render(const Scean& scean)
 
 void Clear(Texture2D* targt)
 {
-	for (size_t y = 0; y < targt->GetHeight(); y++)
+	for (int32_t y = 0; y < targt->GetHeight(); y++)
 	{
-		for (size_t x = 0; x < targt->GetWidth(); x++)
+		for (int32_t x = 0; x < targt->GetWidth(); x++)
 		{
 			targt->SetPixel(x, y, mu::vec3{ 0,0,0 });
 		}
@@ -291,6 +308,7 @@ void SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, i
 
 	for (int32_t i = 0; i < n; i++)
 	{
+		auto temp = spritesPair[n - i - 1];
 		dist2sprite[i] = spritesPair[n - i - 1].first;
 		order[i] = spritesPair[n - i - 1].second;
 	}
