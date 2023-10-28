@@ -31,7 +31,7 @@ public:
 
 	inline mu::vec3 SampleTexture(int32_t x, int32_t y) const
 	{
-		//ASSERT(x < m_Width); //Inavlid witdth;
+		ASSERT(x < m_Width); //Inavlid witdth;
 		ASSERT(y < m_Height); //Inavlid witdth;
 
 		mu::vec4 temp = m_TextureBuffer[y * m_Width + x];

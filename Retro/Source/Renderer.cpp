@@ -207,6 +207,7 @@ void Render(const Scean& scean)
 		const Sprite& curentSprite = scean.GetSprite(spriteOrder[i]);
 		const Texture2D& spriteTex = scean.GetTexture(curentSprite.GetTextureID());
 
+
 		mu::vec2 csPos; //Sprite position related to camera
 
 		csPos.x = curentSprite.GetPos().x - cam.Pos().x;
@@ -222,19 +223,21 @@ void Render(const Scean& scean)
 		float transformX = invDet * (cam.Dir().y * csPos.x - cam.Dir().x * csPos.y);
 		float transformY = invDet * (-cam.ClipPlane().y * csPos.x + cam.ClipPlane().x * csPos.y);
 
+		int32_t verticalSpriteOffset = static_cast<int32_t>(curentSprite.GetHeightOffset() / transformY);
+
 		int32_t screanX = static_cast<int32_t>((target->GetWidth() / 2) * (1 + transformX / transformY));
 
 		//Calculet screan space height
-		int32_t spriteHeight = abs(static_cast<int32_t>(target->GetHeight() / transformY));
+		int32_t spriteHeight = abs(static_cast<int32_t>(target->GetHeight() / transformY)) / curentSprite.GetScale().y;
 
-		int32_t drawStartY = -spriteHeight / 2 + target->GetHeight() / 2;
+		int32_t drawStartY = -spriteHeight / 2 + target->GetHeight() / 2 + verticalSpriteOffset;
 		if (drawStartY < 0) drawStartY = 0;
 
-		int32_t drawStopY = spriteHeight / 2 + target->GetHeight() / 2;
+		int32_t drawStopY = spriteHeight / 2 + target->GetHeight() / 2 + verticalSpriteOffset;
 		if (drawStopY >= target->GetHeight()) drawStopY = target->GetHeight() - 1;
 
 		//Calculete screan spece width
-		int32_t spriteWidth = abs(static_cast<int32_t>(target-> GetHeight() / transformY));
+		int32_t spriteWidth = abs(static_cast<int32_t>(target->GetHeight() / transformY)) / curentSprite.GetScale().x;
 
 		int32_t drawStartX = -spriteWidth / 2 + screanX;
 		if (drawStartX < 0) drawStartX = 0;
@@ -255,11 +258,11 @@ void Render(const Scean& scean)
 
 				for (int32_t y = drawStartY; y < drawStopY; y++)
 				{
-					int32_t d = y * 256 - target->GetHeight() * 128 + spriteHeight * 128;
+					int32_t d = (y - verticalSpriteOffset) * 256 - target->GetHeight() * 128 + spriteHeight * 128;
 					int texY = ((d * spriteH) / spriteHeight) / 256;
 					
-					if (texX > spriteW) LOG_ERROR("Invalid uv x cord: " << texX);
-					if (texY > spriteH) LOG_ERROR("Invalid uv x cord: " << texX);
+					if (texX >= spriteW) LOG_ERROR("Invalid uv x cord: " << texX);
+					if (texY >= spriteH) LOG_ERROR("Invalid uv x cord: " << texX);
 
 					mu::vec3 color = spriteTex.SampleTexture(texX, texY);
 
