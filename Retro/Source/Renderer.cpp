@@ -8,7 +8,10 @@
 #include "Camera.h"
 #include "Timer.h"
 
-void Render(const Scean& scean)
+
+
+
+void  Renderer::Render(const Scean& scean)
 {
 	Timer renderTime;
 	renderTime.Start();
@@ -16,7 +19,7 @@ void Render(const Scean& scean)
 	const Camera& cam = scean.GetCamera();
 	Texture2D* const target = cam.GetTarget();
 
-	Clear(target);
+	Renderer::Clear(target);
 
 	const Texture2D& floorTextrue = scean.GetTexture(3);
 	const Texture2D& ceelingTextrue = scean.GetTexture(4);
@@ -228,7 +231,7 @@ void Render(const Scean& scean)
 		int32_t screanX = static_cast<int32_t>((target->GetWidth() / 2) * (1 + transformX / transformY));
 
 		//Calculet screan space height
-		int32_t spriteHeight = abs(static_cast<int32_t>(target->GetHeight() / transformY)) / curentSprite.GetScale().y;
+		int32_t spriteHeight =  static_cast<int32_t>(abs(target->GetHeight() / transformY) / curentSprite.GetScale().y);
 
 		int32_t drawStartY = -spriteHeight / 2 + target->GetHeight() / 2 + verticalSpriteOffset;
 		if (drawStartY < 0) drawStartY = 0;
@@ -237,7 +240,7 @@ void Render(const Scean& scean)
 		if (drawStopY >= target->GetHeight()) drawStopY = target->GetHeight() - 1;
 
 		//Calculete screan spece width
-		int32_t spriteWidth = abs(static_cast<int32_t>(target->GetHeight() / transformY)) / curentSprite.GetScale().x;
+		int32_t spriteWidth = static_cast<int32_t>(abs(target->GetHeight() / transformY) / curentSprite.GetScale().x);
 
 		int32_t drawStartX = -spriteWidth / 2 + screanX;
 		if (drawStartX < 0) drawStartX = 0;
@@ -284,7 +287,7 @@ void Render(const Scean& scean)
 	//LOG("frame rendered in time: " << renderTime);
 }
 
-void Clear(Texture2D* targt)
+void Renderer::Clear(Texture2D* targt)
 {
 	for (int32_t y = 0; y < targt->GetHeight(); y++)
 	{
@@ -296,7 +299,7 @@ void Clear(Texture2D* targt)
 
 }
 
-void SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, int32_t n)
+void Renderer::SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, int32_t n)
 {
 	std::vector<std::pair<float, int32_t>> spritesPair(n);
 
@@ -318,25 +321,3 @@ void SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, i
 
 }
 
-mu::vec3 GetWallColor(uint8_t code)
-{
-	switch (code)
-	{
-		case 1: return mu::vec3{ 1,0,0 };
-		case 2: return mu::vec3{ 0,1,0 };
-		case 3: return mu::vec3{ 0,0,1 };
-		case 4: return mu::vec3{ 1,1,1 };
-		case 5: return mu::vec3{ 1,1,0 };
-
-	}
-
-	LOG_ERROR("INVALID COLOR CODE");
-	ASSERT(false); //INVALID COLOR
-	
-	return mu::vec3{ 0,0,0 };
-}
-
-mu::vec3 SampleTexture(const Texture2D& texture, uint32_t xCord, uint32_t yCord)
-{
-	return mu::vec3();
-}

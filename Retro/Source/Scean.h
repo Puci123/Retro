@@ -34,7 +34,7 @@ class Scean
 		uint32_t m_MapWidth;
 		uint32_t m_MapHeight;
 
-		std::vector<uint8_t>	m_MapLayout;
+		std::vector<uint8_t>	m_MapLayout			= std::vector<uint8_t>(1,1);
 
 		std::vector<Texture2D>	m_SceanTextures;
 		std::vector<Sprite>		m_SceanSprites;

@@ -18,8 +18,10 @@ class App
 		App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name);
 		~App();
 		
+
 		void Update();
 		void Loop();
+
 
 		inline bool IsRunning() const { return true; }
 
@@ -31,5 +33,11 @@ class App
 		ImGuiIO* m_ImGuiIO;
 
 		Scean m_Scean;
-		Camera m_TempCam;
+		Texture2D* m_SceanVwieDisplay;
+	
+	private:
+		void DrawViwePort();
+		void DrawSceanViwie();
+		
+		
 };

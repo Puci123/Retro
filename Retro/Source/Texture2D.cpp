@@ -11,7 +11,7 @@ Texture2D::Texture2D(int32_t width, int32_t height, bool gpuBind)
 
 	for (int32_t i = 0; i < width * height; i++)
 	{
-		m_TextureBuffer[i] = mu::vec4{ 0.f, 0.f, 0.f, 1.f };
+		m_TextureBuffer[i] = mu::vec4{ 1.f, 0.f, 1.f, 1.f };
 	}
 
 	if (m_GpuSide)
@@ -43,7 +43,18 @@ Texture2D::Texture2D(const std::string& path, bool gpuBind)
 
 	int32_t  numberOfParameters;
 	uint8_t* tempBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &numberOfParameters, 4);
-	LOG("Texture loaded from " << path << " OK!");
+
+	if (stbi_failure_reason()) 
+	{
+		LOG_ERROR(" " << stbi_failure_reason());
+		ASSERT(false);
+	}
+	else
+	{
+		LOG("Texture loaded from " << path << " OK!");
+
+	}
+
 
 	m_TextureBuffer.resize(m_Width * m_Height);
 	int32_t curentPixel = 0;

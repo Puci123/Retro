@@ -54,8 +54,11 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 
 	//Addition setup
 	m_Scean.SetCam(Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, new Texture2D(m_WindwoWidth, m_WindowHeight)));
-	Render(m_Scean);
+	Renderer::Render(m_Scean);
 	m_Scean.GetCamera().GetTarget()->Update();
+
+	//Editor setup
+	m_SceanVwieDisplay = new Texture2D(m_WindwoWidth, m_WindowHeight);
 
 }
 
@@ -71,7 +74,7 @@ void App::Loop()
 	glfwPollEvents();
 
 	//Render scean
-	Render(m_Scean);
+	Renderer::Render(m_Scean);
 
 	//================================== Input handle ================================== //
 	
@@ -128,25 +131,9 @@ void App::Loop()
 	// ------------------------------ GUI CODE HERE ---------------------//
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()); //Enable docking UI
 
-	//Vwie port Panel 
-	ImGui::Begin("Vwie port");
-	{
-		//TO DO: Scaling window
-		Texture2D* targetTexture = m_Scean.GetCamera().GetTarget();
-		
-		targetTexture->Bind();
-		ImGui::Image((void*)(intptr_t)(targetTexture->GetID()), ImVec2(static_cast<float>(m_WindwoWidth), static_cast<float>(m_WindowHeight - 8.0)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
-		targetTexture->Unbind();
-	}
-	ImGui::End();
-
-	//Property Panle 
-	ImGui::Begin("Scean");
-	{
-
-	}
-	ImGui::End();
-
+	DrawViwePort();
+	DrawSceanViwie();
+	
 	// -------------------------------------------------------------------//
 
 
@@ -170,5 +157,42 @@ void App::Loop()
 
 
 	glfwSwapBuffers(m_Window);
+
+}
+
+void App::DrawViwePort()
+{
+	ImGui::Begin("Vwie port");
+	
+	ImVec2 viwieSize = ImGui::GetContentRegionMax();
+	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight()  * 2);
+
+
+	Texture2D* targetTexture = m_Scean.GetCamera().GetTarget();
+
+	targetTexture->Bind();
+	ImGui::Image((void*)(intptr_t)(targetTexture->GetID()), ImVec2(static_cast<float>(viwieSize.x), static_cast<float>(viwieSize.y)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
+	targetTexture->Unbind();
+
+	ImGui::End();
+
+}
+
+void App::DrawSceanViwie()
+{
+	ImGui::Begin("Scean");
+	ImVec2 viwieSize = ImGui::GetContentRegionMax();
+	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight() * 2);
+
+	m_SceanVwieDisplay->Bind();
+	ImGui::Image((void*)(intptr_t)(m_SceanVwieDisplay->GetID()), ImVec2(static_cast<float>(viwieSize.x), static_cast<float>(viwieSize.y)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
+	m_SceanVwieDisplay->Unbind();
+
+
+	ImGui::End();
+}
+
+void App::Update() 
+{
 
 }
