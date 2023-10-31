@@ -1,6 +1,9 @@
 #include <iostream>
+
 #include "App.h"
 #include "Renderer.h"
+#include "Draw2D.h"
+
 
 App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 	:m_WindwoWidth(windowWidth), m_WindowHeight(windowhHeight)
@@ -180,6 +183,27 @@ void App::DrawViwePort()
 
 void App::DrawSceanViwie()
 {
+	//Draw scean in editor
+	mu::vec2 cellSize				= mu::vec2{ m_EditorDisplayScale,m_EditorDisplayScale};
+	mu::vec2 speartationLineSize	= mu::vec2{ 2.f, 2.f };
+	mu::vec3 cellColor				= mu::vec3{ 0.f,0.f,0.f };
+
+	for (int32_t y = 0; y < m_Scean.GetHeight(); y++)
+	{
+		for (int32_t x = 0; x < m_Scean.GetWidth(); x++)
+		{
+			if (m_Scean.GetCellValue(x, y) > 0) cellColor = mu::vec3{ 0.f,0.f,0.f };
+			else cellColor = mu::vec3{ 1.f,1.f,1.f };
+
+			mu::vec2 celCenter = mu::vec2{ 5 + x * cellSize.x + cellSize.x / 2, 5 + y * cellSize.y + cellSize.y / 2 };
+			Draw2D::DrawRect(cellSize - speartationLineSize, celCenter, cellColor, m_SceanVwieDisplay);
+		}
+	}
+
+	m_SceanVwieDisplay->Update();
+
+
+	//Display taraget in scean viwe
 	ImGui::Begin("Scean");
 	ImVec2 viwieSize = ImGui::GetContentRegionMax();
 	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight() * 2);
@@ -187,7 +211,6 @@ void App::DrawSceanViwie()
 	m_SceanVwieDisplay->Bind();
 	ImGui::Image((void*)(intptr_t)(m_SceanVwieDisplay->GetID()), ImVec2(static_cast<float>(viwieSize.x), static_cast<float>(viwieSize.y)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
 	m_SceanVwieDisplay->Unbind();
-
 
 	ImGui::End();
 }

@@ -34,6 +34,8 @@ class App
 
 		Scean m_Scean;
 		Texture2D* m_SceanVwieDisplay;
+
+		float m_EditorDisplayScale = 40.f;
 	
 	private:
 		void DrawViwePort();

@@ -24,6 +24,10 @@ namespace mu
 	{
 		int32_t x;
 		int32_t y;
+
+		vec2Int(vec2 a);
+		vec2Int(int32_t _x, int32_t _y);
+
 	};
 
 
@@ -69,5 +73,6 @@ namespace mu
 	{
 		return(a.x < epsilon && a.y < epsilon && a.z < epsilon);
 	}
+
 
 }

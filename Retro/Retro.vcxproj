@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\Draw2D.cpp" />
     <ClCompile Include="Source\MathUtylity.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Scean.cpp" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\DebugUtility.h" />
+    <ClInclude Include="Source\Draw2D.h" />
     <ClInclude Include="Source\MathUtylity.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Scean.h" />
