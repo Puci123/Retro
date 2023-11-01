@@ -34,7 +34,9 @@ Scean::Scean()
 	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 	};
 
-	m_CameraMain = Camera(mu::vec2{22.0f, 12.f},mu::vec2{-1.0f, 0.f},mu::vec2{0.f, 0.66f}, nullptr);
+	m_CameraMain = Camera(mu::vec2{22.0f, 12.f},mu::vec2{-0.1f, 0.f},mu::vec2{0.0f, 0.66f}, nullptr);
+	//m_CameraMain.SetFOV(130);
+
 	LOG("Created map with size: " << m_MapWidth << "x" << m_MapHeight);
 
 	//=================================	INIT TEXTURE (TEST ONLY) =================================//

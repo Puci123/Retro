@@ -17,13 +17,14 @@ class Camera
 		inline mu::vec2 ClipPlane()		      const { return m_ClipPlane;}
 		inline uint32_t TargetTextureID()     const { return m_TargetTexture->GetID(); }
 		inline Texture2D* const GetTarget()   const { return  m_TargetTexture; }
+		inline void SetPos(mu::vec2 pos)			{ m_Pos = pos; }
 
 		void BindTargetTexture()	const;
 		void UnbindTargetTexture()  const;
 
-		inline void SetPos(mu::vec2 pos) { m_Pos = pos; }
 		void SetRotation(float theta);
-		//void SetFOV(float phi);
+		void SetFOV(float phi);
+		float GetFov();
 
 		void MoveCamera(mu::vec2 traslation);
 		void RotateCam(float rotation);

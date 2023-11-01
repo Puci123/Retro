@@ -57,6 +57,8 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 
 	//Addition setup
 	m_Scean.SetCam(Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, new Texture2D(m_WindwoWidth, m_WindowHeight)));
+	m_Scean.GetCamera().SetFOV(70.f);
+
 	Renderer::Render(m_Scean, m_Scean.GetCamera());
 	m_Scean.GetCamera().GetTarget()->Update();
 
@@ -271,7 +273,7 @@ void App::DrawEditorPorpoerties()
 		Camera& cam				= m_Scean.GetCamera();
 		mu::vec2 cameraPos		= cam.Pos();
 		float rotation			= cam.GetAangleRotation();
-		float fov				= 0.0f;
+		float fov				= cam.GetFov();
 
 		ImGui::DragFloat2("Pos ", reinterpret_cast<float*>(&cameraPos), 0.1f);
 		ImGui::DragFloat("Dir ", reinterpret_cast<float*>(&rotation));
@@ -280,6 +282,7 @@ void App::DrawEditorPorpoerties()
 		
 		cam.SetPos(cameraPos);
 		cam.SetRotation(rotation);
+		cam.SetFOV(fov);
 	}
 
 	
