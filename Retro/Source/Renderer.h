@@ -9,8 +9,6 @@
 namespace Renderer 
 {
 
-	void Render(const Scean& scean);
-	void Clear(Texture2D* targt);
-
+	void Render(const Scean& scean, Camera& camera);
 	void SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, int32_t n);
 }

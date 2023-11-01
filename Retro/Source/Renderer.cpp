@@ -7,19 +7,19 @@
 #include "Renderer.h"
 #include "Camera.h"
 #include "Timer.h"
+#include "Draw2D.h"
 
 
 
-
-void  Renderer::Render(const Scean& scean)
+void  Renderer::Render(const Scean& scean, Camera& camera)
 {
 	Timer renderTime;
 	renderTime.Start();
 
-	const Camera& cam = scean.GetCamera();
+	Camera& cam = camera;
 	Texture2D* const target = cam.GetTarget();
 
-	Renderer::Clear(target);
+	Draw2D::ClearTexture(target, mu::vec3{ 0,0,0 });
 
 	const Texture2D& floorTextrue = scean.GetTexture(3);
 	const Texture2D& ceelingTextrue = scean.GetTexture(4);
@@ -287,17 +287,6 @@ void  Renderer::Render(const Scean& scean)
 	//LOG("frame rendered in time: " << renderTime);
 }
 
-void Renderer::Clear(Texture2D* targt)
-{
-	for (int32_t y = 0; y < targt->GetHeight(); y++)
-	{
-		for (int32_t x = 0; x < targt->GetWidth(); x++)
-		{
-			targt->SetPixel(x, y, mu::vec3{ 0,0,0 });
-		}
-	}
-
-}
 
 void Renderer::SortSprites(std::vector<int32_t>& order, std::vector<float>& dist2sprite, int32_t n)
 {

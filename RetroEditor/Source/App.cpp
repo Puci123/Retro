@@ -57,11 +57,14 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 
 	//Addition setup
 	m_Scean.SetCam(Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, new Texture2D(m_WindwoWidth, m_WindowHeight)));
-	Renderer::Render(m_Scean);
+	Renderer::Render(m_Scean, m_Scean.GetCamera());
 	m_Scean.GetCamera().GetTarget()->Update();
 
 	//Editor setup
 	m_SceanVwieDisplay = new Texture2D(m_WindwoWidth, m_WindowHeight);
+
+	//Seta scean camera 
+	m_SceanCamearaPos = mu::vec2{ 0.0f,0.f };
 
 }
 
@@ -77,52 +80,7 @@ void App::Loop()
 	glfwPollEvents();
 
 	//Render scean
-	Renderer::Render(m_Scean);
-
-	//================================== Input handle ================================== //
-	
-	//Camera movment 
-	//TO DO abstract to anthore class
-
-	mu::vec2 traslation = mu::vec2{ 0.f,0.f };
-	mu::vec2 camFwd = m_Scean.GetCamera().Dir();
-
-
-
-	if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))
-	{
-		traslation.x = camFwd.x * 0.2f;
-		traslation.y = camFwd.y * 0.2f;
-
-	}
-	else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))
-	{
-		traslation.x = -camFwd.x * 0.2f;
-		traslation.y = -camFwd.y * 0.2f;
-	}
-
-	if (ImGui::IsKeyPressed(ImGuiKey_D))
-	{
-		m_Scean.RoteateCamera(0.1f);
-	}
-	else if (ImGui::IsKeyPressed(ImGuiKey_A))
-	{
-		m_Scean.RoteateCamera(-0.1f);
-	}
-	else if(ImGui::IsKeyPressed(ImGuiKey_RightArrow))
-	{
-		mu::vec2 temp = mu::vec2{ camFwd.y, -camFwd.x };
-		traslation.x = temp.x * 0.2f;
-		traslation.y = temp.y * 0.2f;
-	}
-	else if(ImGui::IsKeyPressed(ImGuiKey_LeftArrow))
-	{
-		mu::vec2 temp = mu::vec2{ -camFwd.y, camFwd.x };
-		traslation.x = temp.x * 0.2f;
-		traslation.y = temp.y * 0.2f;
-	}
-
-	m_Scean.MoveCam(traslation);
+	Renderer::Render(m_Scean, m_Scean.GetCamera());
 
 	//================================== Render GUI ================================== //
 
@@ -136,6 +94,7 @@ void App::Loop()
 
 	DrawViwePort();
 	DrawSceanViwie();
+	DrawEditorPorpoerties();
 	
 	// -------------------------------------------------------------------//
 
@@ -166,6 +125,59 @@ void App::Loop()
 void App::DrawViwePort()
 {
 	ImGui::Begin("Vwie port");
+
+
+	//Camera movment 
+	//TO DO abstract to anthore class
+
+	mu::vec2 traslation = mu::vec2{ 0.f,0.f };
+	mu::vec2 camFwd = m_Scean.GetCamera().Dir();
+
+	//======================== Game camera movment TEST //========================
+
+	//TODO dect if item is hovered 
+
+	if (ImGui::IsWindowFocused())
+	{
+
+		if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))
+		{
+			traslation.x = camFwd.x * 0.2f;
+			traslation.y = camFwd.y * 0.2f;
+
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))
+		{
+			traslation.x = -camFwd.x * 0.2f;
+			traslation.y = -camFwd.y * 0.2f;
+		}
+
+		if (ImGui::IsKeyPressed(ImGuiKey_D))
+		{
+			m_Scean.RoteateCamera(5.f);
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_A))
+		{
+			m_Scean.RoteateCamera(-5.f);
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow))
+		{
+			mu::vec2 temp = mu::vec2{ camFwd.y, -camFwd.x };
+			traslation.x = temp.x * 0.2f;
+			traslation.y = temp.y * 0.2f;
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow))
+		{
+			mu::vec2 temp = mu::vec2{ -camFwd.y, camFwd.x };
+			traslation.x = temp.x * 0.2f;
+			traslation.y = temp.y * 0.2f;
+		}
+	}
+
+	m_Scean.MoveCam(traslation);
+
+
+	//======================== ACTULY DARAW ====================================//
 	
 	ImVec2 viwieSize = ImGui::GetContentRegionMax();
 	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight()  * 2);
@@ -183,10 +195,17 @@ void App::DrawViwePort()
 
 void App::DrawSceanViwie()
 {
-	//Draw scean in editor
+
+	//======================  Draw scean in editor	==============================//
+
 	mu::vec2 cellSize				= mu::vec2{ m_EditorDisplayScale,m_EditorDisplayScale};
 	mu::vec2 speartationLineSize	= mu::vec2{ 2.f, 2.f };
 	mu::vec3 cellColor				= mu::vec3{ 0.f,0.f,0.f };
+
+
+	cellSize = cellSize / m_CameraZ;
+
+	Draw2D::ClearTexture(m_SceanVwieDisplay, m_SceanBackGroundColor);
 
 	for (int32_t y = 0; y < m_Scean.GetHeight(); y++)
 	{
@@ -196,9 +215,17 @@ void App::DrawSceanViwie()
 			else cellColor = mu::vec3{ 1.f,1.f,1.f };
 
 			mu::vec2 celCenter = mu::vec2{ 5 + x * cellSize.x + cellSize.x / 2, 5 + y * cellSize.y + cellSize.y / 2 };
+			
+			//Project form world space to screan space
+			celCenter = celCenter - m_SceanCamearaPos;
+
 			Draw2D::DrawRect(cellSize - speartationLineSize, celCenter, cellColor, m_SceanVwieDisplay);
 		}
 	}
+
+
+	mu::vec2 cameraPos = mu::vec2{ m_Scean.GetCamera().Pos().x * cellSize.x - m_SceanCamearaPos.x, m_Scean.GetCamera().Pos().y * cellSize.y - m_SceanCamearaPos.y };
+	Draw2D::DrawRect(cellSize, cameraPos, mu::vec3{ 0,0,1 }, m_SceanVwieDisplay);
 
 	m_SceanVwieDisplay->Update();
 
@@ -212,6 +239,50 @@ void App::DrawSceanViwie()
 	ImGui::Image((void*)(intptr_t)(m_SceanVwieDisplay->GetID()), ImVec2(static_cast<float>(viwieSize.x), static_cast<float>(viwieSize.y)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
 	m_SceanVwieDisplay->Unbind();
 
+
+	//========================== Editor Camera movemnt Test //========================== 
+
+
+	if (ImGui::IsWindowFocused())
+	{
+
+		if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))			m_SceanCamearaPos.y += m_SceanCameraSpeed;
+		else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))	m_SceanCamearaPos.y -= m_SceanCameraSpeed;
+		else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow))	m_SceanCamearaPos.x += m_SceanCameraSpeed;
+		else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow))	m_SceanCamearaPos.x -= m_SceanCameraSpeed;
+		else if (ImGui::IsKeyPressed(ImGuiKey_W))			m_CameraZ += m_CameraZoomSpeed;
+		else if (ImGui::IsKeyPressed(ImGuiKey_S))			m_CameraZ -= m_CameraZoomSpeed;
+
+
+		if (m_CameraZ < 0.75f) m_CameraZ = 0.75f;
+
+	}
+
+
+	ImGui::End();
+}
+
+void App::DrawEditorPorpoerties()
+{
+	ImGui::Begin("Properites");
+
+	if (ImGui::CollapsingHeader("Game camera")) 
+	{
+		Camera& cam				= m_Scean.GetCamera();
+		mu::vec2 cameraPos		= cam.Pos();
+		float rotation			= cam.GetAangleRotation();
+		float fov				= 0.0f;
+
+		ImGui::DragFloat2("Pos ", reinterpret_cast<float*>(&cameraPos), 0.1f);
+		ImGui::DragFloat("Dir ", reinterpret_cast<float*>(&rotation));
+		ImGui::DragFloat("Camera clip ", reinterpret_cast<float*>(&fov));
+
+		
+		cam.SetPos(cameraPos);
+		cam.SetRotation(rotation);
+	}
+
+	
 	ImGui::End();
 }
 

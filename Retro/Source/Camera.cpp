@@ -24,6 +24,23 @@ void Camera::UnbindTargetTexture() const
 	m_TargetTexture->Unbind();
 }
 
+void Camera::SetRotation(float theta)
+{
+
+	float deltaRot = theta - m_AngleRotation;
+	m_AngleRotation = theta;
+
+	theta	 = theta * 0.0174532925f;
+	deltaRot = deltaRot * 0.0174532925f;
+	m_Dir = mu::vec2{ cosf(-theta), sinf(-theta) };
+
+	mu::vec2 oldPlane = m_ClipPlane;
+
+	m_ClipPlane.x = m_ClipPlane.x * cosf(-deltaRot) - m_ClipPlane.y * sinf(-deltaRot);
+	m_ClipPlane.y = oldPlane.x * sinf(-deltaRot) + oldPlane.y * cosf(-deltaRot);
+
+}
+
 void Camera::MoveCamera(mu::vec2 traslation)
 {
 	m_Pos = m_Pos + traslation;
@@ -31,6 +48,9 @@ void Camera::MoveCamera(mu::vec2 traslation)
 
 void Camera::RotateCam(float rotation)
 {
+	m_AngleRotation += rotation;
+	rotation = rotation * 0.0174532925f;
+
 	mu::vec2 oldDir = m_Dir;
 	rotation = -rotation;
 

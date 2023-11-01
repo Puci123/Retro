@@ -21,7 +21,7 @@ class Scean
 		inline uint32_t GetWidth()				const { return m_MapWidth; }
 		inline uint32_t GetHeight()				const { return m_MapHeight; }
 
-		inline const Camera& GetCamera()		const { return m_CameraMain; }
+		inline Camera& GetCamera()					  { return m_CameraMain; }
 		inline void SetCam(const Camera& cam)		  { m_CameraMain = cam; }
 
 		inline uint32_t SpriteCount()			   const { return m_SceanSprites.size(); }
