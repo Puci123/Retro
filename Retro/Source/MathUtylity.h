@@ -74,5 +74,27 @@ namespace mu
 		return(a.x < epsilon && a.y < epsilon && a.z < epsilon);
 	}
 
+	//========================================== RAD & DEG ==========================================//
+
+	inline float Rad2Deg(float rad) 
+	{
+		return rad * 57.2957795f;
+	}
+
+	inline float Deg2Rad(float deg) 
+	{
+		return deg * 0.0174532925f;
+	}
+
+
+	//================================= FLOAT =================================//
+
+	inline float Clamp01(float a) 
+	{
+		if (a < 0.f) return 0.f;
+		if (a > 1.f) return 1.f;
+
+		return a;
+	}
 
 }

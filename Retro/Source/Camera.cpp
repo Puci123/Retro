@@ -30,8 +30,8 @@ void Camera::SetRotation(float theta)
 	float deltaRot = theta - m_AngleRotation;
 	m_AngleRotation = theta;
 
-	theta	 = theta * 0.0174532925f;
-	deltaRot = deltaRot * 0.0174532925f;
+	theta = mu::Deg2Rad(theta);
+	deltaRot = mu::Deg2Rad(deltaRot);
 	m_Dir = mu::vec2{ cosf(-theta), sinf(-theta) };
 
 	mu::vec2 oldPlane = m_ClipPlane;
@@ -45,7 +45,7 @@ void Camera::SetFOV(float phi)
 {
 	if (abs(phi - GetFov()) > 0.5f) 
 	{
-		phi = phi * 0.0174532925f;
+		phi = mu::Deg2Rad(phi);
 		m_ClipPlane = mu::vec2{ 0, tanf(phi / 2) };
 	}
 	
@@ -56,7 +56,7 @@ float Camera::GetFov()
 	float clipLengt = sqrt(m_ClipPlane.x * m_ClipPlane.x + m_ClipPlane.y * m_ClipPlane.y);
 	float dirLengt = sqrt(m_Dir.x * m_Dir.x + m_Dir.y * m_Dir.y);
 
-	return  2 * atan(clipLengt / dirLengt) * 57.2957795;
+	return  2 *  mu::Rad2Deg(atan(clipLengt / dirLengt));
 }
 
 void Camera::MoveCamera(mu::vec2 traslation)

@@ -216,7 +216,7 @@ void App::DrawSceanViwie()
 			if (m_Scean.GetCellValue(x, y) > 0) cellColor = mu::vec3{ 0.f,0.f,0.f };
 			else cellColor = mu::vec3{ 1.f,1.f,1.f };
 
-			mu::vec2 celCenter = mu::vec2{ 5 + x * cellSize.x + cellSize.x / 2, 5 + y * cellSize.y + cellSize.y / 2 };
+			mu::vec2 celCenter = mu::vec2{x * cellSize.x,  y * cellSize.y};
 			
 			//Project form world space to screan space
 			celCenter = celCenter - m_SceanCamearaPos;
@@ -228,12 +228,45 @@ void App::DrawSceanViwie()
 
 	mu::vec2 cameraPos = mu::vec2{ m_Scean.GetCamera().Pos().x * cellSize.x - m_SceanCamearaPos.x, m_Scean.GetCamera().Pos().y * cellSize.y - m_SceanCamearaPos.y };
 	Draw2D::DrawRect(cellSize, cameraPos, mu::vec3{ 0,0,1 }, m_SceanVwieDisplay);
+	
+
+	//======================  Mouse postion ==============================//
+	ImGui::Begin("Scean");
+
+	if (ImGui::IsWindowFocused())
+	{
+		//Get in window mouse pos
+		ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+
+		mu::vec2 mousePos = mu::vec2{ m_ImGuiIO->MousePos.x - ImGui::GetWindowPos().x, m_ImGuiIO->MousePos.y - ImGui::GetWindowPos().y };
+		mu::vec2 windowMax = mu::vec2{ ImGui::GetWindowContentRegionMax().x, ImGui::GetWindowContentRegionMax().y };
+		mu::vec2 windowMin = mu::vec2{ ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowContentRegionMin().y };
+
+		mousePos.x = mu::Clamp01(mousePos.x / (windowMax.x - windowMin.x)) * m_SceanVwieDisplay->GetWidth();
+		mousePos.y = mu::Clamp01(1 - mousePos.y / (windowMax.y - windowMin.y)) * m_SceanVwieDisplay->GetHeight();
+
+		//Get in grid Pos
+
+		mu::vec2 mousePos2Cam = mousePos + m_SceanCamearaPos + cellSize / 2;
+
+		float perX = mu::Clamp01(mousePos2Cam.x / ((m_Scean.GetWidth() - 1)  * cellSize.x));
+		float perY = mu::Clamp01(mousePos2Cam.y / ((m_Scean.GetHeight() - 1) * cellSize.y));
+
+		mu::vec2Int inGridPos = mu::vec2Int(static_cast<int32_t>(perX * (m_Scean.GetWidth() - 1)), static_cast<int32_t>(perY * (m_Scean.GetHeight() - 1)));
+
+
+		//Test draw tareget cell in diffrent color
+		mu::vec2 rectPos = mu::vec2{ inGridPos.x * cellSize.x, inGridPos.y * cellSize.y };
+		rectPos = rectPos - m_SceanCamearaPos;
+
+		Draw2D::DrawRectFrame(cellSize, rectPos, 5, mu::vec3{ 0,1,0 }, m_SceanVwieDisplay);
+	}
+
+	//========================== RENDER ==========================// 
 
 	m_SceanVwieDisplay->Update();
 
-
 	//Display taraget in scean viwe
-	ImGui::Begin("Scean");
 	ImVec2 viwieSize = ImGui::GetContentRegionMax();
 	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight() * 2);
 
