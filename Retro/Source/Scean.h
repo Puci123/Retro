@@ -30,6 +30,8 @@ class Scean
 		void MoveCam(mu::vec2 traslation);
 		void RoteateCamera(float r);
 
+		void InseretWall(mu::vec2Int pos, int32_t elemntID);
+
 	private:
 		uint32_t m_MapWidth;
 		uint32_t m_MapHeight;

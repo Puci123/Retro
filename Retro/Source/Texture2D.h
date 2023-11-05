@@ -18,7 +18,7 @@ public:
 
 	~Texture2D();
 
-
+	void Copy2GPU();
 	void Bind();
 	void Unbind();
 

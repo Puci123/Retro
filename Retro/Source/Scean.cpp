@@ -107,4 +107,22 @@ void Scean::RoteateCamera(float r)
 {
 	m_CameraMain.RotateCam(r);
 }
+
+void Scean::InseretWall(mu::vec2Int pos, int32_t elemntID)
+{
+	if (pos.x >= m_MapWidth || pos.x < 0) 
+	{
+		LOG_ERROR("Invalid wall pose: " << pos.x  << " Map width is: " << m_MapWidth);
+		return;
+	}
+
+	if (pos.y >= m_MapWidth || pos.y < 0)
+	{
+		LOG_ERROR("Invalid wall pose: " << pos.y << " Map width is: " << m_MapHeight);
+		return;
+	}
+
+	m_MapLayout[pos.y * m_MapWidth + pos.x] = elemntID;
+
+}
 	

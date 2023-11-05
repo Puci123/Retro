@@ -6,7 +6,7 @@
 
 
 App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
-	:m_WindwoWidth(windowWidth), m_WindowHeight(windowhHeight)
+	:m_WindwoWidth(windowWidth), m_WindowHeight(windowhHeight), m_SceanEditor(m_WindwoWidth,m_WindowHeight)
 {
 	//================================== INT WINDOW ==========================//
 
@@ -64,10 +64,11 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 
 	//Editor setup
 	m_SceanVwieDisplay = new Texture2D(m_WindwoWidth, m_WindowHeight);
+	m_SceanEditor.OpenScean(&m_Scean);
+	m_SceanEditor.SetTargetTexture(m_SceanVwieDisplay);
 
-	//Seta scean camera 
-	m_SceanCamearaPos = mu::vec2{ 0.0f,0.f };
-
+	//Load assetes
+	m_SceanEditor.LoadAssets();
 }
 
 App::~App()
@@ -95,8 +96,10 @@ void App::Loop()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()); //Enable docking UI
 
 	DrawViwePort();
-	DrawSceanViwie();
-	DrawEditorPorpoerties();
+	//DrawSceanViwie();
+	m_SceanEditor.DispalyScean();
+	m_SceanEditor.DisplayToolBar();
+	//DrawEditorPorpoerties();
 	
 	// -------------------------------------------------------------------//
 
@@ -195,107 +198,6 @@ void App::DrawViwePort()
 
 }
 
-void App::DrawSceanViwie()
-{
-
-	//======================  Draw scean in editor	==============================//
-
-	mu::vec2 cellSize				= mu::vec2{ m_EditorDisplayScale,m_EditorDisplayScale};
-	mu::vec2 speartationLineSize	= mu::vec2{ 2.f, 2.f };
-	mu::vec3 cellColor				= mu::vec3{ 0.f,0.f,0.f };
-
-
-	cellSize = cellSize / m_CameraZ;
-
-	Draw2D::ClearTexture(m_SceanVwieDisplay, m_SceanBackGroundColor);
-
-	for (int32_t y = 0; y < m_Scean.GetHeight(); y++)
-	{
-		for (int32_t x = 0; x < m_Scean.GetWidth(); x++)
-		{
-			if (m_Scean.GetCellValue(x, y) > 0) cellColor = mu::vec3{ 0.f,0.f,0.f };
-			else cellColor = mu::vec3{ 1.f,1.f,1.f };
-
-			mu::vec2 celCenter = mu::vec2{x * cellSize.x,  y * cellSize.y};
-			
-			//Project form world space to screan space
-			celCenter = celCenter - m_SceanCamearaPos;
-
-			Draw2D::DrawRect(cellSize - speartationLineSize, celCenter, cellColor, m_SceanVwieDisplay);
-		}
-	}
-
-
-	mu::vec2 cameraPos = mu::vec2{ m_Scean.GetCamera().Pos().x * cellSize.x - m_SceanCamearaPos.x, m_Scean.GetCamera().Pos().y * cellSize.y - m_SceanCamearaPos.y };
-	Draw2D::DrawRect(cellSize, cameraPos, mu::vec3{ 0,0,1 }, m_SceanVwieDisplay);
-	
-
-	//======================  Mouse postion ==============================//
-	ImGui::Begin("Scean");
-
-	if (ImGui::IsWindowFocused())
-	{
-		//Get in window mouse pos
-		ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-
-		mu::vec2 mousePos = mu::vec2{ m_ImGuiIO->MousePos.x - ImGui::GetWindowPos().x, m_ImGuiIO->MousePos.y - ImGui::GetWindowPos().y };
-		mu::vec2 windowMax = mu::vec2{ ImGui::GetWindowContentRegionMax().x, ImGui::GetWindowContentRegionMax().y };
-		mu::vec2 windowMin = mu::vec2{ ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowContentRegionMin().y };
-
-		mousePos.x = mu::Clamp01(mousePos.x / (windowMax.x - windowMin.x)) * m_SceanVwieDisplay->GetWidth();
-		mousePos.y = mu::Clamp01(1 - mousePos.y / (windowMax.y - windowMin.y)) * m_SceanVwieDisplay->GetHeight();
-
-		//Get in grid Pos
-
-		mu::vec2 mousePos2Cam = mousePos + m_SceanCamearaPos + cellSize / 2;
-
-		float perX = mu::Clamp01(mousePos2Cam.x / ((m_Scean.GetWidth() - 1)  * cellSize.x));
-		float perY = mu::Clamp01(mousePos2Cam.y / ((m_Scean.GetHeight() - 1) * cellSize.y));
-
-		mu::vec2Int inGridPos = mu::vec2Int(static_cast<int32_t>(perX * (m_Scean.GetWidth() - 1)), static_cast<int32_t>(perY * (m_Scean.GetHeight() - 1)));
-
-
-		//Test draw tareget cell in diffrent color
-		mu::vec2 rectPos = mu::vec2{ inGridPos.x * cellSize.x, inGridPos.y * cellSize.y };
-		rectPos = rectPos - m_SceanCamearaPos;
-
-		Draw2D::DrawRectFrame(cellSize, rectPos, 5, mu::vec3{ 0,1,0 }, m_SceanVwieDisplay);
-	}
-
-	//========================== RENDER ==========================// 
-
-	m_SceanVwieDisplay->Update();
-
-	//Display taraget in scean viwe
-	ImVec2 viwieSize = ImGui::GetContentRegionMax();
-	viwieSize = ImVec2(viwieSize.x, viwieSize.y - ImGui::GetFrameHeight() * 2);
-
-	m_SceanVwieDisplay->Bind();
-	ImGui::Image((void*)(intptr_t)(m_SceanVwieDisplay->GetID()), ImVec2(static_cast<float>(viwieSize.x), static_cast<float>(viwieSize.y)), ImVec2(0.f, 1.f), ImVec2(1.f, 0.f)); //Draw target texture
-	m_SceanVwieDisplay->Unbind();
-
-
-	//========================== Editor Camera movemnt Test //========================== 
-
-
-	if (ImGui::IsWindowFocused())
-	{
-
-		if (ImGui::IsKeyPressed(ImGuiKey_UpArrow))			m_SceanCamearaPos.y += m_SceanCameraSpeed;
-		else if (ImGui::IsKeyPressed(ImGuiKey_DownArrow))	m_SceanCamearaPos.y -= m_SceanCameraSpeed;
-		else if (ImGui::IsKeyPressed(ImGuiKey_RightArrow))	m_SceanCamearaPos.x += m_SceanCameraSpeed;
-		else if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow))	m_SceanCamearaPos.x -= m_SceanCameraSpeed;
-		else if (ImGui::IsKeyPressed(ImGuiKey_W))			m_CameraZ += m_CameraZoomSpeed;
-		else if (ImGui::IsKeyPressed(ImGuiKey_S))			m_CameraZ -= m_CameraZoomSpeed;
-
-
-		if (m_CameraZ < 0.75f) m_CameraZ = 0.75f;
-
-	}
-
-
-	ImGui::End();
-}
 
 void App::DrawEditorPorpoerties()
 {

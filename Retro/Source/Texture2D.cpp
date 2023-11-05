@@ -107,6 +107,24 @@ Texture2D::~Texture2D()
 
 }
 
+void Texture2D::Copy2GPU()
+{
+	glGenTextures(1, &m_RenderID);
+	m_GpuSide = true;
+	Bind();
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_Width, m_Height, 0, GL_RGBA, GL_FLOAT, &m_TextureBuffer[0]);
+	Unbind();
+
+	LOG("Created texture with dim: " << m_Width << "x" << m_Height << " (ID " << m_RenderID << ")");
+
+}
+
 void Texture2D::Bind()
 {
 	glBindTexture(GL_TEXTURE_2D, m_RenderID);

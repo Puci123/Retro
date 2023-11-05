@@ -11,6 +11,7 @@
 
 #include "Scean.h"
 #include "Camera.h"
+#include "SceanEditor.h"
 
 class App
 {
@@ -33,20 +34,14 @@ class App
 		ImGuiIO* m_ImGuiIO;
 
 		Scean m_Scean;
+		SceanEditor m_SceanEditor;
+
 		Texture2D* m_SceanVwieDisplay;
 
 
-		mu::vec2 m_SceanCamearaPos;
-		mu::vec3 m_SceanBackGroundColor = mu::vec3{ 0.85f , 0.f , 0.85f };
-		float m_CameraZ = 1.f;
-
-		float m_EditorDisplayScale	= 40.f;
-		float m_SceanCameraSpeed	= 10.f;
-		float m_CameraZoomSpeed		= 0.05f;
-
 	private:
 		void DrawViwePort();
-		void DrawSceanViwie();
+		//void DrawSceanViwie();
 		void DrawEditorPorpoerties();
 		
 		
