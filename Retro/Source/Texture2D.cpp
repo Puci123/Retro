@@ -37,8 +37,9 @@ Texture2D::Texture2D(int32_t width, int32_t height, bool gpuBind)
 }
 
 Texture2D::Texture2D(const std::string& path, bool gpuBind)
-	:m_GpuSide(gpuBind), m_RenderID(0)
+	:m_GpuSide(gpuBind), m_RenderID(0),m_AssetName(path)
 {
+	
 	stbi_set_flip_vertically_on_load(1);
 
 	int32_t  numberOfParameters;

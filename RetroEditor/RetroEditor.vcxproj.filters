@@ -68,4 +68,7 @@
       <Filter>Pliki zasobów</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\Textures\Dummy.txt" />
+  </ItemGroup>
 </Project>

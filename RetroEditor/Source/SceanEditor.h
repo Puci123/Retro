@@ -19,7 +19,7 @@ class SceanEditor
 		inline void OpenScean(Scean* scean)				{ m_Scean = scean; }
 		inline void SetTargetTexture(Texture2D* target) { m_SceanVwieDisplay = target; }
 
-		void LoadAssets();
+		void LoadAssets(const std::string& path);
 
 		void DispalyScean();
 		void DisplayToolBar();
@@ -36,8 +36,10 @@ class SceanEditor
 		float m_SceanCameraSpeed = 10.f;
 		float m_CameraZoomSpeed = 0.05f;
 
-		std::vector<Texture2D*> temp;
-
+		std::vector<Texture2D*> m_TilesAssets;
+		
+		int32_t curentSelected = -1;
+		int32_t m_curentSelectedButton = -1;
 
 };
 

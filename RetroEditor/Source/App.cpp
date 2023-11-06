@@ -68,7 +68,7 @@ App::App(uint32_t windowWidth, uint32_t windowhHeight, const std::string& name)
 	m_SceanEditor.SetTargetTexture(m_SceanVwieDisplay);
 
 	//Load assetes
-	m_SceanEditor.LoadAssets();
+	m_SceanEditor.LoadAssets("Resources\\Textures\\");
 }
 
 App::~App()

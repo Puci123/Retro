@@ -42,12 +42,14 @@ Scean::Scean()
 	//=================================	INIT TEXTURE (TEST ONLY) =================================//
 
 
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\bluestone.png",false));	//1
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\redbrick.png", false));	//2
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\greystone.png", false));	//3
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\mossy.png", false));		//4
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\eagle.png", false));		//5
-	m_SceanTextures.push_back(Texture2D("Resources\\Textures\\barrel.png", false));		//6
+	
+
+	AddMapTileTexture(Texture2D("Resources\\Textures\\bluestone.png",false), "Resources\\Textures\\bluestone.png");	//1
+	AddMapTileTexture(Texture2D("Resources\\Textures\\redbrick.png", false), "Resources\\Textures\\redbrick.png");	//2
+	AddMapTileTexture(Texture2D("Resources\\Textures\\greystone.png", false),"Resources\\Textures\\greystone.png");	//3
+	AddMapTileTexture(Texture2D("Resources\\Textures\\mossy.png", false),	 "Resources\\Textures\\mossy.png");		//4
+	AddMapTileTexture(Texture2D("Resources\\Textures\\eagle.png", false),	 "Resources\\Textures\\eagle.png");		//5
+	AddMapTileTexture(Texture2D("Resources\\Textures\\barrel.png", false),   "Resources\\Textures\\barrel.png");	//6
 
 
 	///================================= INIT SPRITES =================================//
@@ -59,19 +61,19 @@ Scean::Scean()
 
 }
 
-Scean::Scean(uint32_t width, uint32_t height)
+Scean::Scean(int32_t width, int32_t height)
 	: m_MapWidth(width), m_MapHeight(height)
 {
 	m_MapLayout.resize(width * height,0);
 	m_CameraMain = Camera(mu::vec2{ 22.0f, 12.f }, mu::vec2{ -1.0f, 0.f }, mu::vec2{ 0.f, 0.66f }, nullptr);
 }
 
-Scean::Scean(uint32_t width, uint32_t height, const std::vector<uint8_t>& layout)
+Scean::Scean(int32_t width, int32_t height, const std::vector<uint8_t>& layout)
 	: m_MapWidth(width), m_MapHeight(height)
 {
 	m_MapLayout.resize(width * height);
 
-	for (size_t i = 0; i < width * height; i++)
+	for (int32_t i = 0; i < width * height; i++)
 	{
 		m_MapLayout[i] = layout[i];
 	}
@@ -83,7 +85,7 @@ Scean::Scean(uint32_t width, uint32_t height, const std::vector<uint8_t>& layout
 Scean::~Scean(){}
 
 
-uint8_t Scean::GetCellValue(uint32_t x, uint32_t y) const
+uint8_t Scean::GetCellValue(int32_t x, int32_t y) const
 {
 	ASSERT(x < m_MapWidth);		    //Invalid map width
 	ASSERT(y < m_MapHeight);		//Invalid map height
@@ -123,6 +125,25 @@ void Scean::InseretWall(mu::vec2Int pos, int32_t elemntID)
 	}
 
 	m_MapLayout[pos.y * m_MapWidth + pos.x] = elemntID;
+
+}
+
+int32_t Scean::AddMapTileTexture(const Texture2D& asset, const std::string& name)
+{
+	if (m_NamesIDs.find(name) == m_NamesIDs.end()) 
+	{
+		LOG("Scean does not contain elemnt");
+		LOG("Add: " << name << " with ID: " << m_IDcounter);
+		m_NamesIDs[name] = m_IDcounter++;
+		m_SceanTextures.push_back(asset);
+
+		return (m_IDcounter - 1);
+	}
+	else
+	{
+		return m_NamesIDs[name];
+	}
+
 
 }
 	

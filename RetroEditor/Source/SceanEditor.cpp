@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include "SceanEditor.h"
 #include "Draw2D.h"
 
@@ -11,11 +13,35 @@ SceanEditor::SceanEditor(int32_t screanWidth, int32_t screanHeight)
 SceanEditor::~SceanEditor()
 {}
 
-void SceanEditor::LoadAssets()
+void SceanEditor::LoadAssets(const std::string& path)
 {
+	for (const auto& entry : std::filesystem::directory_iterator(path))
+	{
+		std::string fileName  = entry.path().filename().string();
+		int32_t splitPos = fileName.find('.');
 
-	temp.push_back( new Texture2D("Resources\\Textures\\bluestone.png"));
-	temp.push_back( new Texture2D("Resources\\Textures\\redbrick.png"));
+
+		if (splitPos != std::string::npos)
+		{
+
+			std::string extection = fileName.substr(splitPos, splitPos + 3);
+			if (extection == ".png")
+			{
+				LOG("LODING ASSET: " << entry.path() << " with extection: " << extection);
+				m_TilesAssets.push_back(new Texture2D(entry.path().string()));
+			}
+			else
+			{
+				LOG_ERROR("ASSET HAVE INVALID EXTECTION: " << entry.path());
+			}
+		}
+		else
+		{
+			LOG_ERROR("THERE IS AOTHER DIRECTORY: " << entry.path());
+
+		}
+	
+	}
 
 }
 
@@ -88,9 +114,9 @@ void SceanEditor::DispalyScean()
 
 
 		//Mouse
-		if (ImGui::IsMouseClicked(0, true))
+		if (ImGui::IsMouseClicked(0, true) && curentSelected > -1)
 		{
-			m_Scean->InseretWall(inGridPos, 1);
+			m_Scean->InseretWall(inGridPos, curentSelected + 1);
 		}
 		else if(ImGui::IsMouseClicked(1,true))
 		{
@@ -142,12 +168,19 @@ void SceanEditor::DisplayToolBar()
 
 	if(ImGui::CollapsingHeader("Tiles"))
 	{
-		for (int i = 0; i < temp.size(); i++)
+		for (size_t i = 0; i < m_TilesAssets.size(); i++)
 		{
+			if (i == m_curentSelectedButton) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
 
-			temp[i]->Bind();
-			ImGui::ImageButton((void*)(intptr_t)(temp[i]->GetID()), ImVec2(temp[i]->GetWidth(), temp[i]->GetHeight()));
-			temp[i]->Unbind();
+			m_TilesAssets[i]->Bind();
+			if (ImGui::ImageButton((void*)(intptr_t)(m_TilesAssets[i]->GetID()), ImVec2(static_cast<float>(m_TilesAssets[i]->GetWidth()), static_cast<float>(m_TilesAssets[i]->GetHeight())),ImVec2(1,1),ImVec2(0,0))) 
+			{
+				curentSelected = m_Scean->AddMapTileTexture(*m_TilesAssets[i], m_TilesAssets[i]->GetAssetName());
+				m_curentSelectedButton = i;
+			}
+			m_TilesAssets[i]->Unbind();
+
+			if (i == m_curentSelectedButton) ImGui::PopStyleColor(1);
 		}
 	}
 
