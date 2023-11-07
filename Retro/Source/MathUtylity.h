@@ -97,4 +97,11 @@ namespace mu
 		return a;
 	}
 
+
+	inline float Lerp(float a, float b, float t) 
+	{
+		t = Clamp01(t);
+		return a + t * (b - a);
+	}
+
 }

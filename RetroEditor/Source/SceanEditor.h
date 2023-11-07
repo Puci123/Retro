@@ -29,17 +29,26 @@ class SceanEditor
 		Texture2D* m_SceanVwieDisplay;
 
 		mu::vec2 m_SceanCamearaPos = mu::vec2{ 0,0 };
-		mu::vec3 m_SceanBackGroundColor = mu::vec3{ 0.85f , 0.f , 0.85f };
+		mu::vec3 m_SceanBackGroundColor = mu::vec3{ 0.33f , 0.f , 0.33f };
 		float m_CameraZ = 1.f;
 
 		float m_EditorDisplayScale = 40.f;
 		float m_SceanCameraSpeed = 10.f;
 		float m_CameraZoomSpeed = 0.05f;
 
+		mu::vec2 m_SceanCellSize = mu::vec2{ 0,0 };
+
 		std::vector<Texture2D*> m_TilesAssets;
 		
 		int32_t curentSelected = -1;
 		int32_t m_curentSelectedButton = -1;
+		int32_t m_CurrentLayer = 0; //0 walls, 1 sprites
+		
+		mu::vec2 m_MousePos			= mu::vec2{ 0,0 };
+		mu::vec2Int m_GridMousePos  = mu::vec2Int{ 0,0 };
 
+	private:
+		void Input();
+		void WallLayer();
 };
 

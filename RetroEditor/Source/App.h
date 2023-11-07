@@ -41,7 +41,6 @@ class App
 
 	private:
 		void DrawViwePort();
-		//void DrawSceanViwie();
 		void DrawEditorPorpoerties();
 		
 		
