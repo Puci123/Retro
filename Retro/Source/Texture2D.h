@@ -14,6 +14,8 @@ class Texture2D
 {
 public:
 	Texture2D(int32_t width, int32_t height, bool gpuBind = true);
+	Texture2D(const Texture2D&);
+
 	Texture2D(const std::string& path, bool gpuBind = true);
 
 	~Texture2D();

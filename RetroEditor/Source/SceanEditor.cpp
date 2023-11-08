@@ -72,14 +72,23 @@ void SceanEditor::DispalyScean()
 		}
 	}
 
-	//Sprites
+	//Desature when layer is not selected
+	if (m_CurrentLayer != 0)
+	{
+		Draw2D::Desaturate(m_SceanVwieDisplay, 0.85f);
+	}
 
+	//Draw  sprites
 	for (int i = 0; i < m_Scean->SpriteCount(); i++)
 	{
 		const Sprite& sprite = m_Scean->GetSprite(i);
 
 		mu::vec2 screanPos = mu::vec2{ m_SceanCellSize.x * sprite.GetPos().x, m_SceanCellSize.y * sprite.GetPos().y } - m_SceanCamearaPos;
-		Draw2D::DrawRectTextured(m_SceanCellSize, screanPos, m_Scean->GetTexture(sprite.GetTextureID()), m_SceanVwieDisplay);
+		
+		if(m_CurrentLayer != 1)
+			Draw2D::DrawSpriteOpaqe(m_SceanCellSize, screanPos, m_Scean->GetTexture(sprite.GetTextureID()), m_SceanVwieDisplay, 0.47f);
+		else
+			Draw2D::DrawSprite(m_SceanCellSize, screanPos, m_Scean->GetTexture(sprite.GetTextureID()), m_SceanVwieDisplay);
 
 	}
 
@@ -94,15 +103,10 @@ void SceanEditor::DispalyScean()
 	//Colect Inputs
 	Input();
 
-	//Applay layers effects  
-	if (m_CurrentLayer != 0)
-	{
-		Draw2D::Desaturate(m_SceanVwieDisplay, 0.75f);
-	}
-	else 
-	{
+	//Layer specific mtoda
+	
+	if(m_CurrentLayer == 0)
 		WallLayer();
-	}
 
 	//========================== RENDER ==========================// 
 
@@ -125,22 +129,52 @@ void SceanEditor::DispalyScean()
 void SceanEditor::DisplayToolBar()
 {
 	ImGui::Begin("ToolBar");
+	bool evaluaed = false;
+
+	//TODO: buttons that stay higlighted
 
 	if (ImGui::CollapsingHeader("Layers")) 
 	{
-		if (ImGui::Button("Walls")) 
+		float regionWidth = ImGui::GetWindowContentRegionWidth();
+
+		if (m_CurrentLayer == 0)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
+			evaluaed = true;
+		}
+
+		if (ImGui::Button("Walls",ImVec2(regionWidth, 50.f))) 
 		{
 			m_CurrentLayer = 0;
 		}
 
-		if (ImGui::Button("Sprites")) 
+		if (evaluaed)
+		{
+			ImGui::PopStyleColor(1);
+			evaluaed = false;
+		}
+
+
+		if (m_CurrentLayer == 1)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyle().Colors[ImGuiCol_ButtonActive]);
+			evaluaed = true;
+		}
+
+		if (ImGui::Button("Sprites", ImVec2(regionWidth, 50.f)))
 		{
 			m_CurrentLayer = 1;
+		}
+
+		if (evaluaed)
+		{
+			ImGui::PopStyleColor(1);
+			evaluaed = false;
 		}
 	}
 
 
-	if(ImGui::CollapsingHeader("Tiles"))
+	if(ImGui::CollapsingHeader("Textures"))
 	{
 		for (size_t i = 0; i < m_TilesAssets.size(); i++)
 		{

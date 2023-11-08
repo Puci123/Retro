@@ -133,7 +133,7 @@ int32_t Scean::AddMapTileTexture(const Texture2D& asset, const std::string& name
 	if (m_NamesIDs.find(name) == m_NamesIDs.end()) 
 	{
 		LOG("Scean does not contain elemnt");
-		LOG("Add: " << name << " with ID: " << m_IDcounter);
+		LOG("Add: " << name << " with SID: " << m_IDcounter);
 		m_NamesIDs[name] = m_IDcounter++;
 		m_SceanTextures.push_back(asset);
 

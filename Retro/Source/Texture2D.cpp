@@ -36,6 +36,15 @@ Texture2D::Texture2D(int32_t width, int32_t height, bool gpuBind)
 	}
 }
 
+Texture2D::Texture2D(const Texture2D& a)
+	: m_RenderID(0), m_Width(a.m_Width), m_Height(a.m_Height), m_GpuSide(false)
+{
+
+	LOG("COPY TEXTURE");
+	m_TextureBuffer = a.m_TextureBuffer;
+	m_AssetName = a.m_AssetName;
+}
+
 Texture2D::Texture2D(const std::string& path, bool gpuBind)
 	:m_GpuSide(gpuBind), m_RenderID(0),m_AssetName(path)
 {
