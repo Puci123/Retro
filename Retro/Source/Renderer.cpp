@@ -60,7 +60,7 @@ void  Renderer::Render(const Scean& scean, Camera& camera)
 			floorStart = floorStart + step;
 
 
-			//Draw floor to screan
+			//Draw floor to screan  [WARING: HAVE TO BE SAME SIZE AS CEALING (texture)]
 			mu::vec3 color = floorTextrue.SampleTexture(static_cast<int32_t>(uvCords.x * floorScale) % floorTextrue.GetWidth(), static_cast<int32_t>(uvCords.y * floorScale) % floorTextrue.GetHeight());
 			target->SetPixel(x, target->GetHeight() -  y - 1, color);
 

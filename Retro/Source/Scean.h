@@ -16,7 +16,7 @@ class Scean
 
 		~Scean();
 
-		uint8_t  GetCellValue(int32_t x, int32_t y) const;
+		uint8_t  GetCellValue(int32_t x, int32_t y)	  const;
 		const Texture2D& GetTexture(uint32_t texID)   const;
 
 		inline int32_t GetWidth()						const { return m_MapWidth; }
@@ -25,14 +25,21 @@ class Scean
 		inline Camera& GetCamera()							  { return m_CameraMain; }
 		inline void SetCam(const Camera& cam)				  { m_CameraMain = cam; }
 
-		inline uint32_t SpriteCount()					const { return m_SceanSprites.size(); }
-		inline const Sprite& GetSprite(int32_t id)		const { return m_SceanSprites[id]; }
+		inline uint32_t SpriteCount()					const{ return m_SceanSprites.size(); }
+		inline Sprite& GetSprite(int32_t id)				 { return m_SceanSprites[id]; }
+		inline const Sprite& GetSprite(int32_t id)		const{ return m_SceanSprites[id]; }
+
+
+		bool const IsSprite(const mu::vec2& pos, float ep = 0.01f);
 
 		void MoveCam(mu::vec2 traslation);
 		void RoteateCamera(float r);
 
-		void InseretWall(mu::vec2Int pos, int32_t elemntID);
+		void InseretWall (mu::vec2Int pos, int32_t elemntID);
+		void InsertSpeite(mu::vec2    pos, int32_t elemntID);
+		bool DeleteSpriteWithID(int32_t id);
 		
+		int32_t GetSpriteFromCeell(mu::vec2Int cell);
 		int32_t AddMapTileTexture(const Texture2D& asset, const std::string& name);
 
 	private:

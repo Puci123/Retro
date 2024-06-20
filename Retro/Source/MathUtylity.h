@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint> 
+#include <math.h>
 
 namespace mu
 {
@@ -102,6 +103,13 @@ namespace mu
 	{
 		t = Clamp01(t);
 		return a + t * (b - a);
+	}
+
+	inline float Lenght(vec2 a, vec2 b)
+	{
+
+		vec2 temp = a - b;
+		return sqrtf(temp.x * temp.x + temp.y * temp.y);
 	}
 
 }

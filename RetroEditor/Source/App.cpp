@@ -96,9 +96,10 @@ void App::Loop()
 	ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()); //Enable docking UI
 
 	DrawViwePort();
-	//DrawSceanViwie();
 	m_SceanEditor.DispalyScean();
 	m_SceanEditor.DisplayToolBar();
+	m_SceanEditor.DisplayHierarhy();
+	m_SceanEditor.DisplayProperties();
 	//DrawEditorPorpoerties();
 	
 	// -------------------------------------------------------------------//
@@ -226,5 +227,7 @@ void App::DrawEditorPorpoerties()
 
 void App::Update() 
 {
+	//================= UPDARE GAME OBJECTS IN SCEAN =================// 
+
 
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Scean.h"
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
 
+#include "Scean.h"
 #include "ImGUI/imgui_impl_opengl3.h"
 #include "ImGUI/imgui_impl_glfw.h"
 #include "ImGUI/imgui_internal.h"
@@ -23,10 +23,13 @@ class SceanEditor
 
 		void DispalyScean();
 		void DisplayToolBar();
+		void DisplayHierarhy();
+		void DisplayProperties();
 
 	private:
 		Scean* m_Scean;
 		Texture2D* m_SceanVwieDisplay;
+		Sprite* m_SelectedSprite = nullptr;
 
 		mu::vec2 m_SceanCamearaPos = mu::vec2{ 0,0 };
 		mu::vec3 m_SceanBackGroundColor = mu::vec3{ 0.33f , 0.f , 0.33f };
@@ -40,9 +43,10 @@ class SceanEditor
 
 		std::vector<Texture2D*> m_TilesAssets;
 		
-		int32_t curentSelected = -1;
-		int32_t m_curentSelectedButton = -1;
-		int32_t m_CurrentLayer = 0; //0 walls, 1 sprites
+		int32_t curentSelected			= -1;		//	-1 none
+		int32_t m_CurentSelcedSprite	= -1;		// -1 none
+		int32_t m_curentSelectedButton	= -1;		// -1 none 
+		int32_t m_CurrentLayer			= 0;		//	0 walls, 1 sprites
 		
 		mu::vec2 m_MousePos			= mu::vec2{ 0,0 };
 		mu::vec2Int m_GridMousePos  = mu::vec2Int{ 0,0 };
@@ -50,5 +54,6 @@ class SceanEditor
 	private:
 		void Input();
 		void WallLayer();
+		void SpriteLayer();
 };
 

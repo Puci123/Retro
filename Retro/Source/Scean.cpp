@@ -100,6 +100,16 @@ const Texture2D& Scean::GetTexture(uint32_t texID) const
 
 }
 
+bool const Scean::IsSprite(const mu::vec2& pos, float ep)
+{
+	for (int32_t i = 0; i < m_SceanSprites.size(); i++)
+	{
+		if (mu::Lenght(pos, m_SceanSprites[i].GetPos()) < ep) return true;
+	}
+
+	return false;
+}
+
 void Scean::MoveCam(mu::vec2 translation)
 {
 	m_CameraMain.MoveCamera(translation);
@@ -126,6 +136,61 @@ void Scean::InseretWall(mu::vec2Int pos, int32_t elemntID)
 
 	m_MapLayout[pos.y * m_MapWidth + pos.x] = elemntID;
 
+}
+
+void Scean::InsertSpeite(mu::vec2 pos, int32_t elemntID)
+{	
+
+
+	if (!IsSprite(pos))
+	{
+		Sprite sprite(pos, mu::vec2{ 1,1 }, elemntID);
+
+		m_SceanSprites.push_back(sprite);
+		LOG("Sprite suscesfully created");
+	}
+	else
+	{
+		LOG("Place is arealedy ociupaed");
+	}
+}
+
+bool Scean::DeleteSpriteWithID(int32_t id)
+{
+	if (id < m_SceanSprites.size())
+	{
+	
+		for (int32_t i = id; i < m_SceanSprites.size() - 1; i++)
+		{
+			m_SceanSprites[i] = m_SceanSprites[i + 1];
+		}
+		
+		m_SceanSprites.pop_back();
+		LOG("Delted sprite with id: " << id);
+		return true;
+	}
+
+	LOG_ERROR("INVALID ID PASSED TO DELETE SPRITE! " << id);
+	return false;
+
+}
+
+int32_t Scean::GetSpriteFromCeell(mu::vec2Int cell)
+{
+	for (size_t i = 0; i < m_SceanSprites.size(); i++)
+	{
+		mu::vec2Int temp = mu::vec2Int{ static_cast<int32_t>(m_SceanSprites[i].GetPos().x) , static_cast<int32_t>(m_SceanSprites[i].GetPos().y )};
+
+		if (temp.x == cell.x && temp.y == cell.y) 
+		{
+			LOG("FOUND SPIRTE AT POS (sprite ID:" << i);
+			return i;
+		}
+	}
+
+
+	LOG("Do not found sprite (sprite ID: -1");
+	return -1;
 }
 
 int32_t Scean::AddMapTileTexture(const Texture2D& asset, const std::string& name)

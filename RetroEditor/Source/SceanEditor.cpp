@@ -79,7 +79,7 @@ void SceanEditor::DispalyScean()
 	}
 
 	//Draw  sprites
-	for (int i = 0; i < m_Scean->SpriteCount(); i++)
+	for (uint32_t i = 0; i < m_Scean->SpriteCount(); i++)
 	{
 		const Sprite& sprite = m_Scean->GetSprite(i);
 
@@ -105,8 +105,10 @@ void SceanEditor::DispalyScean()
 
 	//Layer specific mtoda
 	
-	if(m_CurrentLayer == 0)
-		WallLayer();
+	if (m_CurrentLayer == 0)		WallLayer();
+	else if (m_CurrentLayer == 1)	SpriteLayer();
+
+	
 
 	//========================== RENDER ==========================// 
 
@@ -191,8 +193,98 @@ void SceanEditor::DisplayToolBar()
 			if (i == m_curentSelectedButton) ImGui::PopStyleColor(1);
 		}
 	}
-	
+
+	if (ImGui::CollapsingHeader("Sprite detalis")) 
+	{
+		if (m_CurentSelcedSprite > -1) 
+		{
+			Sprite& crrSprite = m_Scean->GetSprite(m_CurentSelcedSprite);
+
+			float tempPos[2]	{crrSprite.GetPos().x, crrSprite.GetPos().y};
+			float tempScael[2]	{crrSprite.GetScale().x, crrSprite.GetScale().y };
+			int32_t tempHoff =	crrSprite.GetHeightOffset();
+
+			ImGui::DragFloat2("Position", tempPos);
+			ImGui::DragInt( "Height", &tempHoff);
+			ImGui::DragFloat2("Scale", tempScael);
+
+			crrSprite.SetPos(mu::vec2{ tempPos[0], tempPos[1] });
+			crrSprite.SetScale(mu::vec2{ tempScael[0], tempScael[1] });
+			crrSprite.SetHeight(tempHoff);
+		}
+	}	
 	ImGui::End();
+}
+
+void SceanEditor::DisplayHierarhy()
+{
+
+	ImGui::Begin("Hierarchy");
+
+	//Main camera
+	if (ImGui::CollapsingHeader("Cameras"))
+	{
+		if (ImGui::Button("Main cam"))
+		{
+
+		}
+	}
+	
+
+
+	//Sprites 
+	if (ImGui::CollapsingHeader("Scean elemnts"))
+	{
+		for (size_t i = 0; i < m_Scean->SpriteCount(); i++)
+		{
+			std::string label = "Sprite " + m_Scean->GetSprite(i).GetName();
+			if (ImGui::Button(label.c_str())) 
+			{
+				LOG("Detalis of sprite with id: " << i);
+				m_SelectedSprite = &(m_Scean->GetSprite(i));
+			}
+		}
+	}
+
+	ImGui::End();
+}
+
+void SceanEditor::DisplayProperties()
+{
+	if (m_SelectedSprite != nullptr) 
+	{
+		ImGui::Begin("Properites");
+		
+		mu::vec2 pos   = m_SelectedSprite->GetPos();
+		mu::vec2 scale = m_SelectedSprite->GetScale();
+		int32_t height = m_SelectedSprite->GetHeightOffset();
+
+
+		ImGui::Text(m_SelectedSprite->GetName().c_str());
+		ImGui::DragFloat2("Pos", reinterpret_cast<float*>(&pos),0.25f);
+		ImGui::DragInt("Height off", &height);
+		ImGui::DragFloat2("Sacle", reinterpret_cast<float*>(&scale), 0.25f);
+
+		if (ImGui::CollapsingHeader("Sprite modules")) 
+		{
+			if (ImGui::Button("Add module")) 
+			{
+				LOG("MODULE ADDED");
+				/*
+					ACTULY ADD MODULES TO SPRITES !!
+				
+				*/
+			}
+		}
+
+
+
+		m_SelectedSprite->SetPos(pos);
+		m_SelectedSprite->SetScale(scale);
+		m_SelectedSprite->SetHeight(height);
+
+		ImGui::End();
+	}
 }
 
 void SceanEditor::Input()
@@ -257,6 +349,31 @@ void SceanEditor::WallLayer()
 			m_Scean->InseretWall(m_GridMousePos, 0);
 		}
 	}
+}
+
+void SceanEditor::SpriteLayer()
+{	
+	//Test draw tareget cell in diffrent color
+	mu::vec2 rectPos = mu::vec2{ m_GridMousePos.x * m_SceanCellSize.x, m_GridMousePos.y * m_SceanCellSize.y };
+	rectPos = rectPos - m_SceanCamearaPos;
+
+	Draw2D::DrawRectFrame(m_SceanCellSize, rectPos, 5, mu::vec3{ 0,1,0 }, m_SceanVwieDisplay);
+
+	mu::vec2 temp = mu::vec2{ static_cast<float>(m_GridMousePos.x), static_cast<float>(m_GridMousePos.y) };
+
+	// mouse handle
+	if (ImGui::IsMouseClicked(0, false) && curentSelected > -1) 
+	{
+		m_Scean->InsertSpeite(temp, curentSelected + 1);
+
+	}
+	else if (ImGui::IsMouseClicked(1, false))
+	{
+	 	m_CurentSelcedSprite = m_Scean->GetSpriteFromCeell(m_GridMousePos);
+		if (m_CurentSelcedSprite != -1) m_Scean->DeleteSpriteWithID(m_CurentSelcedSprite);
+
+	}	
+
 }
 
 

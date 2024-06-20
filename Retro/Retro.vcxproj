@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\DebugUtility.h" />
     <ClInclude Include="Source\Draw2D.h" />
     <ClInclude Include="Source\MathUtylity.h" />
