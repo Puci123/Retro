@@ -125,6 +125,7 @@ void App::Loop()
 
 
 	glfwSwapBuffers(m_Window);
+	Update();
 
 }
 
@@ -228,6 +229,7 @@ void App::DrawEditorPorpoerties()
 void App::Update() 
 {
 	//================= UPDARE GAME OBJECTS IN SCEAN =================// 
+	m_Scean.UpdateSprites();
 
 
 }

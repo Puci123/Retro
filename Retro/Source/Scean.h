@@ -34,6 +34,7 @@ class Scean
 
 		void MoveCam(mu::vec2 traslation);
 		void RoteateCamera(float r);
+		void UpdateSprites();
 
 		void InseretWall (mu::vec2Int pos, int32_t elemntID);
 		void InsertSpeite(mu::vec2    pos, int32_t elemntID);

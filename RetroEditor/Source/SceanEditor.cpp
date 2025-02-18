@@ -2,6 +2,7 @@
 
 #include "SceanEditor.h"
 #include "Draw2D.h"
+#include "Module.h"
 
 SceanEditor::SceanEditor(int32_t screanWidth, int32_t screanHeight)
 	:m_SceanVwieDisplay(nullptr), m_Scean(nullptr)
@@ -264,20 +265,20 @@ void SceanEditor::DisplayProperties()
 		ImGui::DragFloat2("Pos", reinterpret_cast<float*>(&pos),0.25f);
 		ImGui::DragInt("Height off", &height);
 		ImGui::DragFloat2("Sacle", reinterpret_cast<float*>(&scale), 0.25f);
-
+		
 		if (ImGui::CollapsingHeader("Sprite modules")) 
 		{
 			if (ImGui::Button("Add module")) 
 			{
-				LOG("MODULE ADDED");
-				/*
-					ACTULY ADD MODULES TO SPRITES !!
-				
-				*/
+				m_SelectedSprite->AddModule(std::make_unique<Module>(m_SelectedSprite));
+
+			}
+
+			for (const std::string mod_Name : m_SelectedSprite->GetModulesName())
+			{
+				ImGui::Button(mod_Name.c_str());
 			}
 		}
-
-
 
 		m_SelectedSprite->SetPos(pos);
 		m_SelectedSprite->SetScale(scale);

@@ -5,7 +5,8 @@
 #include <memory>
 
 #include "MathUtylity.h"
-#include "Component.h"
+
+class Module; 
 
 
 class Sprite
@@ -14,7 +15,16 @@ class Sprite
 		Sprite();
 		Sprite(mu::vec2 pos, mu::vec2 scale, int32_t textureID);
 		Sprite(float xPos, float yPos, mu::vec2 scale, int32_t textureID);
+		Sprite(const Sprite& other);
 		~Sprite();
+
+		Sprite& operator=(Sprite&& other) noexcept { return *this; }
+
+
+		void AddModule(std::unique_ptr<Module> module);
+		void UpdateAllModules();
+		std::vector<std::string> GetModulesName();
+		
 
 		inline int32_t GetTextureID()		 const { return m_TextureID; }
 		inline mu::vec2 GetPos()			 const { return m_SpritePos; }
@@ -37,6 +47,6 @@ class Sprite
 		int32_t m_TextureID;
 		
 		std::string m_Name = "New object";
-		std::vector<std::shared_ptr<Component>> m_Components;
+		std::vector<std::unique_ptr<Module>> m_Modules;
 };
 

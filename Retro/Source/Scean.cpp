@@ -120,6 +120,14 @@ void Scean::RoteateCamera(float r)
 	m_CameraMain.RotateCam(r);
 }
 
+void Scean::UpdateSprites()
+{
+	for (Sprite& sprite : m_SceanSprites)
+	{
+		sprite.UpdateAllModules();
+	}
+}
+
 void Scean::InseretWall(mu::vec2Int pos, int32_t elemntID)
 {
 	if (pos.x >= m_MapWidth || pos.x < 0) 
@@ -162,7 +170,7 @@ bool Scean::DeleteSpriteWithID(int32_t id)
 	
 		for (int32_t i = id; i < m_SceanSprites.size() - 1; i++)
 		{
-			m_SceanSprites[i] = m_SceanSprites[i + 1];
+			m_SceanSprites[i] = std::move( m_SceanSprites[i + 1]);
 		}
 		
 		m_SceanSprites.pop_back();

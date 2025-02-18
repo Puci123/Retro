@@ -249,15 +249,15 @@ void  Renderer::Render(const Scean& scean, Camera& camera)
 		if (drawStopX >= target->GetWidth()) drawStopX = target->GetWidth() - 1;
 
 		//lop vertacly throught screan
-		int spriteH = spriteTex.GetHeight();
-		int spriteW = spriteTex.GetWidth();
+		int32_t spriteH = spriteTex.GetHeight();
+		int32_t spriteW = spriteTex.GetWidth();
 
 
 		for (int32_t x = drawStartX; x < drawStopX; x++)
 		{
 			if (transformY > 0 && x > 0 && x < target->GetWidth() && transformY < zBuffer[x])
 			{
-				int texX = int(256 * (x - (-spriteWidth / 2 + screanX)) * spriteW / spriteWidth) / 256;
+				int32_t texX = int32_t(256 * (x - (-spriteWidth / 2 + screanX)) * spriteW / spriteWidth) / 256;
 
 				for (int32_t y = drawStartY; y < drawStopY; y++)
 				{

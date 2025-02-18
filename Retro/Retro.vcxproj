@@ -147,6 +147,7 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Draw2D.cpp" />
     <ClCompile Include="Source\MathUtylity.cpp" />
+    <ClCompile Include="Source\Module.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Scean.cpp" />
     <ClCompile Include="Source\Sprite.cpp" />
@@ -162,11 +163,13 @@
     <ClCompile Include="Vendor\stbi\stbi_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Modules\TestModule.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\DebugUtility.h" />
     <ClInclude Include="Source\Draw2D.h" />
     <ClInclude Include="Source\MathUtylity.h" />
+    <ClInclude Include="Source\Module.h" />
     <ClInclude Include="Source\Renderer.h" />
     <ClInclude Include="Source\Scean.h" />
     <ClInclude Include="Source\Sprite.h" />
